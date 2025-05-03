@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">MyRecipeApp</string>
+    <string name="icon_search">Icons Search</string>
+    <string name="icon_button_back">Icons Button Back</string>
+    /////Home
+    <string name="image_user">Image User</string>
+    <string name="home_button">Home Button</string>////////////////////
+    <string name="home_search_ingredient">Search Ingredients</string>
+    <string name="icon_save">Save Icon</string>
+    <string name="category_button">All Category</string>
+    <string name="category_button_icon">Category Arrow Forward</string>
+
+    ////////////Category
+    <string name="beef_image">Image Beef</string>
+</resources>
