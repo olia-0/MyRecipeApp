@@ -22,6 +22,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.myrecipeapp.ui.screens.categories.CategoriesScreen
 import com.example.myrecipeapp.ui.screens.category.CategoryScreen
 import com.example.myrecipeapp.ui.screens.home.HomeScreen
+import com.example.myrecipeapp.ui.screens.recipe.RecipeScreen
 import com.example.myrecipeapp.ui.screens.saved.SavedScreen
 import com.example.myrecipeapp.ui.screens.search.SearchScreen
 import com.example.myrecipeapp.ui.theme.MyPrimeryOrang
@@ -50,6 +51,9 @@ fun NavigationGraph(
         }
         composable(AppRoute.CategoriesScreen.route) {
             CategoriesScreen(navController)
+        }
+        composable(AppRoute.RecipeScreen.route) {
+            RecipeScreen(navController)
         }
 }
 

@@ -62,6 +62,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.myrecipeapp.R
+import com.example.myrecipeapp.ui.components.SearchTextField
 import com.example.myrecipeapp.ui.theme.Gray100
 import com.example.myrecipeapp.ui.theme.Gray200
 import com.example.myrecipeapp.ui.theme.Gray300
@@ -135,7 +136,7 @@ fun HomeScreen(navController: NavHostController) {
                 Row(modifier = Modifier
                     .padding(5.dp),
                     verticalAlignment = Alignment.CenterVertically) {
-                    BorderlessTextField(modifier = Modifier)
+                    SearchTextField(modifier = Modifier)
 
                     //VerticalDivider(modifier = Modifier.size(8.dp))
                     Spacer(modifier = Modifier.size(8.dp))
@@ -175,7 +176,7 @@ fun HomeScreen(navController: NavHostController) {
 
             ) {
                 items(countRecipe){
-                    CardRecipeHomeScreen()
+                    CardRecipeHomeScreen(navController)
                 }
             }
         }
@@ -190,7 +191,7 @@ fun HomeScreen(navController: NavHostController) {
 
             ) {
                 items(countRecipe){
-                    CardRecipeHomeScreen()
+                    CardRecipeHomeScreen(navController)
                 }
             }
         }
@@ -243,31 +244,31 @@ fun CategoryButton(
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun BorderlessTextField(modifier: Modifier) {
-    var text by remember { mutableStateOf("") }
-
-    TextField(
-        value = text,
-        onValueChange = { text = it },
-        placeholder = { Text("Введіть текст...", color = Gray400,fontSize = 14.sp,lineHeight = 14.sp ) },
-        colors = TextFieldDefaults.textFieldColors(
-            containerColor = Color.Transparent,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent,
-            unfocusedTextColor = Gray400,
-            focusedTextColor = Slate900
-
-        ),
-        singleLine = true,
-        textStyle = TextStyle(
-            fontSize = 14.sp,
-            lineHeight = 14.sp
-        )
-    )
-}
+//@OptIn(ExperimentalMaterial3Api::class)
+//@Composable
+//fun SearchTextField(modifier: Modifier) {
+//    var text by remember { mutableStateOf("") }
+//
+//    TextField(
+//        value = text,
+//        onValueChange = { text = it },
+//        placeholder = { Text("Введіть текст...", color = Gray400,fontSize = 14.sp,lineHeight = 14.sp ) },
+//        colors = TextFieldDefaults.textFieldColors(
+//            containerColor = Color.Transparent,
+//            focusedIndicatorColor = Color.Transparent,
+//            unfocusedIndicatorColor = Color.Transparent,
+//            disabledIndicatorColor = Color.Transparent,
+//            unfocusedTextColor = Gray400,
+//            focusedTextColor = Slate900
+//
+//        ),
+//        singleLine = true,
+//        textStyle = TextStyle(
+//            fontSize = 14.sp,
+//            lineHeight = 14.sp
+//        )
+//    )
+//}
 @Composable
 fun CardFridge(){
     val ingredients = listOf(
@@ -330,7 +331,9 @@ fun IngredientCard(ingredient: String, imageRes: String) {
 }
 
 @Composable
-fun CardRecipeHomeScreen(){
+fun CardRecipeHomeScreen(
+    navController: NavHostController
+){
     Card(modifier = Modifier
         .width(300.dp)
         .height(282.dp)
@@ -346,7 +349,10 @@ fun CardRecipeHomeScreen(){
             contentColor = MyPrimeryOrang,
         ),
         elevation = CardDefaults.cardElevation(4.dp),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(12.dp),
+        onClick = {
+            navController.navigate(route = "recipe")
+        }
     ) {
         var isSave by rememberSaveable { mutableStateOf(false) }
         Column(

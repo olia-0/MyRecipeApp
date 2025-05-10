@@ -56,9 +56,11 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.myrecipeapp.navigation.AppRoute
 import com.example.myrecipeapp.navigation.NavigationGraph
+import dagger.hilt.android.AndroidEntryPoint
 
 //import com.example.myrecipeapp.navigation.NavigationGraph
-
+//@AndroidEntryPoint
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

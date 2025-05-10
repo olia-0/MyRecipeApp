@@ -85,9 +85,9 @@ fun RecipeCategoryCardComponent(
 ){
     Card(
         modifier = Modifier
-            .padding(6.dp)
+            .padding(10.dp)
             .width(80.dp)
-            .height(100.dp),
+            .height(130.dp),
         onClick = { navController.navigate("category")}
     ) {
         Box(
