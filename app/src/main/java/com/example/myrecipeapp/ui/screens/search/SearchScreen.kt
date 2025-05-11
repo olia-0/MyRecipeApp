@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import com.example.myrecipeapp.ui.components.SearchRecipeTextField
 import com.example.myrecipeapp.ui.components.SearchTextField
 import com.example.myrecipeapp.ui.screens.home.CardRecipeHomeScreen
 import com.example.myrecipeapp.ui.theme.Gray300
@@ -50,8 +51,9 @@ fun SearchScreen(navController: NavHostController = rememberNavController()) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         item {
-            Spacer(modifier = Modifier.size(30.dp))
-            SearchTextField(modifier = Modifier)
+            Spacer(modifier = Modifier.size(20.dp))
+            //SearchTextField(modifier = Modifier)
+            SearchRecipeTextField()
         }
         item {
             Row(

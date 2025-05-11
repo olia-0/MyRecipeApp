@@ -120,4 +120,8 @@ dependencies {
 
     ///
     implementation(libs.converter.gson)
+
+    /////YouTube
+    implementation(libs.core)
+    implementation (libs.androidx.lifecycle.runtime.ktx.v251)
 }

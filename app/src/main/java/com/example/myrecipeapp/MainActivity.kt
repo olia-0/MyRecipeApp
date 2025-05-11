@@ -68,7 +68,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             MyRecipeAppTheme(darkTheme = false) {
                 AppHomeScreen()
-                //GreetingPreview()
             }
 //            MyRecipeAppTheme {
 //                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
@@ -120,19 +119,6 @@ fun AppHomeScreen(
     }
 }
 
-@Composable
-fun CustomTopBarHomeScreen(){
-
-}
-
-//@Preview(showSystemUi = true)
-//@Composable
-//fun GreetingPreview() {
-//    MyRecipeAppTheme {
-//        Text(text = "Hello World!", color = Color.Yellow)
-//
-//    }
-//}
 
 
 

@@ -12,4 +12,8 @@
 
     ////////////Category
     <string name="beef_image">Image Beef</string>
+
+    ///////////Recipe
+    <string name="description">Description</string>
+    <string name="instructions">Instructions</string>
 </resources>
