@@ -1,8 +1,8 @@
 package com.example.myrecipeapp.di
 
 import com.example.myrecipeapp.data.remote.api.ApiService
-import com.example.myrecipeapp.data.repositoryImpl.MealRepositoryImpl
-import com.example.myrecipeapp.domain.repository.MealRepository
+import com.example.myrecipeapp.data.repositoryImpl.RecipeRepositoryImpl
+import com.example.myrecipeapp.domain.repository.RecipeRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,7 +13,7 @@ import dagger.hilt.components.SingletonComponent
 object AppModule {
 
     @Provides
-    fun provideMealRepository(apiService: ApiService): MealRepository {
-        return MealRepositoryImpl(apiService)
+    fun provideMealRepository(apiService: ApiService): RecipeRepository {
+        return RecipeRepositoryImpl(apiService)
     }
 }

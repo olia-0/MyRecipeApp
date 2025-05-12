@@ -121,7 +121,8 @@ fun SearchScreen(navController: NavHostController = rememberNavController()) {
 
             ) {
                 items(5){
-                    CardRecipeHomeScreen(navController)
+                    //CardRecipeHomeScreen(navController)
+                    Text("1")
                 }
             }
         }

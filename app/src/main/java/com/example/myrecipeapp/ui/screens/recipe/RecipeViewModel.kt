@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.myrecipeapp.domain.model.Meal
 import com.example.myrecipeapp.domain.usecase.GetMealByIdUseCase
 import com.example.myrecipeapp.domain.usecase.GetMealsUseCase
-import com.example.myrecipeapp.domain.usecase.GetRandomMealUseCase
 import com.example.myrecipeapp.domain.usecase.MealInstructionsUseCase
 import com.example.myrecipeapp.domain.usecase.YouTubeIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +18,7 @@ import javax.inject.Inject
 class RecipeViewModel @Inject constructor(
     private val getMealsUseCase: GetMealsUseCase,
     private val getMealByIdUseCase: GetMealByIdUseCase,
-    private val getRandomMealUseCase: GetRandomMealUseCase,
+    //private val getRandomMealUseCase: GetRandomRecipesUseCase,
     private val mealInstructionsUseCase: MealInstructionsUseCase,
     private val idVideoUseCase : YouTubeIdUseCase
 ) : ViewModel() {
@@ -60,9 +59,9 @@ class RecipeViewModel @Inject constructor(
         }
     }
 
-    fun fetchRandomMeal() {
-        viewModelScope.launch {
-            _randomMeal.value = getRandomMealUseCase()
-        }
-    }
+//    fun fetchRandomMeal() {
+//        viewModelScope.launch {
+//            _randomMeal.value = getRandomMealUseCase()
+//        }
+//    }
 }

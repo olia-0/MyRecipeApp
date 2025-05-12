@@ -2,8 +2,10 @@ package com.example.myrecipeapp.data.mapper
 
 import com.example.myrecipeapp.data.remote.dto.CategoriesDTO
 import com.example.myrecipeapp.data.remote.dto.MealDto
+import com.example.myrecipeapp.data.remote.dto.RecipeShortDto
 import com.example.myrecipeapp.domain.model.Category
 import com.example.myrecipeapp.domain.model.Meal
+import com.example.myrecipeapp.domain.model.RecipeShort
 
 object RecipeMapper {
 
@@ -141,8 +143,11 @@ object RecipeMapper {
         )
     }
 }
+fun RecipeShortDto.toMealShort(): RecipeShort {
+    return RecipeShort(id = idMeal, name = strMeal, thumbnail = strMealThumb)
+}
 
-fun MealDto.toMeal(): Meal {
+fun MealDto.toRecipe(): Meal {
     return Meal(
         idRecipe = idMeal,
         nameRecipe = strMeal,

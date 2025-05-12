@@ -18,7 +18,10 @@ import com.example.myrecipeapp.ui.theme.Slate900
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchTextField(modifier: Modifier) {
+fun SearchTextField(
+    //text: MutableSt
+    modifier: Modifier,
+) {
     var text by remember { mutableStateOf("") }
 
     TextField(

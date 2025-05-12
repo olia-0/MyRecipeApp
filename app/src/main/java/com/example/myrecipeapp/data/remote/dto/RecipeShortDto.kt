@@ -2,12 +2,12 @@ package com.example.myrecipeapp.data.remote.dto
 
 import com.google.gson.annotations.SerializedName
 
-data class RecipeByCategoryDto(
+data class RecipeShortDto(
     @SerializedName("strMeal") val strMeal: String,
     @SerializedName("strMealThumb") val strMealThumb: String,
     @SerializedName("idMeal") val idMeal: String,
 )
 
-data class RecipesByCategoryListDto(
-    @SerializedName("meals") val meals: List<RecipeByCategoryDto>
+data class RecipeShortListDto(
+    @SerializedName("meals") val meals: List<RecipeShortDto>
 )

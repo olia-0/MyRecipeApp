@@ -1,5 +1,8 @@
 package com.example.myrecipeapp.ui.screens.home
 
+import android.os.Build
+import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -14,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.onConsumedWindowInsetsChanged
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -40,7 +44,9 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -56,12 +62,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.myrecipeapp.R
+import com.example.myrecipeapp.domain.model.RecipeShort
 import com.example.myrecipeapp.ui.components.SearchTextField
 import com.example.myrecipeapp.ui.theme.Gray100
 import com.example.myrecipeapp.ui.theme.Gray200
@@ -74,9 +83,35 @@ import com.example.myrecipeapp.ui.theme.Slate700
 import com.example.myrecipeapp.ui.theme.Slate900
 import com.example.myrecipeapp.ui.theme.White
 
+//@RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(navController: NavHostController) {
+fun HomeScreen(
+    navController: NavHostController,
+    homeViewModel: HomeViewModel = hiltViewModel()
+) {
+    val recipesRandom10 by homeViewModel.randomRecipes.observeAsState()
+    val recipesByIngredients by homeViewModel.searchRecipesByIngredients.observeAsState()
+    val selectedIngredients by homeViewModel.ingredients.observeAsState(emptyList())
+//    val ingredients = remember {
+//        mutableListOf("")
+//    }
+
+
+//    LaunchedEffect(key1 = recipesRandom10) {
+//        if (recipesRandom10.isNullOrEmpty()) {
+//            homeViewModel.fetchRandomRecipe()
+//        }
+//    }
+    LaunchedEffect(Unit) {
+        if (recipesRandom10.isNullOrEmpty()) {
+            homeViewModel.fetchRandomRecipe()
+        }
+
+    }
+    val recipesToDisplay = recipesByIngredients ?: recipesRandom10
+    Log.d("AAAA LIST CARD", recipesToDisplay.toString())
+
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
 
@@ -127,29 +162,57 @@ fun HomeScreen(navController: NavHostController) {
             }
         }
         item {
-            Box(modifier = Modifier
-                .fillParentMaxWidth()
-                .padding(25.dp,10.dp)
-                .height(70.dp)
-                .clip(RoundedCornerShape(10.dp))
-                .background(Gray100)){
-                Row(modifier = Modifier
-                    .padding(5.dp),
-                    verticalAlignment = Alignment.CenterVertically) {
-                    SearchTextField(modifier = Modifier)
-
-                    //VerticalDivider(modifier = Modifier.size(8.dp))
-                    Spacer(modifier = Modifier.size(8.dp))
-                    Icon(modifier = Modifier.size(40.dp).padding(5.dp),
-                        painter = painterResource(R.drawable.search),
-                        contentDescription = stringResource(R.string.home_search_ingredient),
-                        tint = Gray400
-                    )
+            SearchRecipeByIngredientsTextField(
+                onAddIngredient = { ingredient ->
+                    //onIngredientClick = { homeViewModel.addIngredient(it) }
+                    //selectedIngredients.add(ingredient)
+                    //homeViewModel.addIngredient(ingredient)
+                    //homeViewModel.searchByIngredients(selectedIngredients)
+                    homeViewModel.searchByIngredients(ingredient)
                 }
-            }
+            )
+//            Box(modifier = Modifier
+//                .fillParentMaxWidth()
+//                .padding(25.dp,10.dp)
+//                .height(70.dp)
+//                .clip(RoundedCornerShape(10.dp))
+//                .background(Gray100)){
+//                Row(modifier = Modifier
+//                    .padding(5.dp),
+//                    verticalAlignment = Alignment.CenterVertically) {
+//                    //SearchTextField(modifier = Modifier)
+//
+//                    TextField(
+//                        value = inputTextIngredients,
+//                        onValueChange = { inputTextIngredients = it },
+//                        placeholder = { Text("Введіть текст...", color = Gray400,fontSize = 14.sp,lineHeight = 14.sp ) },
+//                        colors = TextFieldDefaults.textFieldColors(
+//                            containerColor = Color.Transparent,
+//                            focusedIndicatorColor = Color.Transparent,
+//                            unfocusedIndicatorColor = Color.Transparent,
+//                            disabledIndicatorColor = Color.Transparent,
+//                            unfocusedTextColor = Gray400,
+//                            focusedTextColor = Slate900
+//
+//                        ),
+//                        singleLine = true,
+//                        textStyle = TextStyle(
+//                            fontSize = 14.sp,
+//                            lineHeight = 14.sp
+//                        )
+//                    )
+//                    //VerticalDivider(modifier = Modifier.size(8.dp))
+//                    Spacer(modifier = Modifier.size(8.dp))
+//                    Icon(modifier = Modifier.size(40.dp).padding(5.dp),
+//                        painter = painterResource(R.drawable.search),
+//                        contentDescription = stringResource(R.string.home_search_ingredient),
+//                        tint = Gray400
+//                    )
+//                }
+//            }
         }
         item {
-            CardFridge()
+            CardFridge(onIngredientClick = { homeViewModel.addIngredient(it) })
 //            LazyHorizontalGrid(
 //                rows = GridCells.Fixed(2), // 2 стовпці
 //                contentPadding = PaddingValues(top = 8.dp),
@@ -166,35 +229,80 @@ fun HomeScreen(navController: NavHostController) {
 //            }
         }
         item {
-            LazyRow(
-                modifier = Modifier
-                    .fillParentMaxWidth()
-                    .height(350.dp),
-                    //.background(Color.Cyan),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceAround
+//            val recipesToDisplay = if (!recipesByIngredients.isNullOrEmpty()) {
+//                recipesByIngredients
+//            } else {
+//                recipesRandom10
+//            }
 
-            ) {
-                items(countRecipe){
-                    CardRecipeHomeScreen(navController)
+            recipesToDisplay?.let { list ->
+                LazyRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(350.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    contentPadding = PaddingValues(horizontal = 16.dp)
+                ) {
+                    items(list.size) { index ->
+                        CardRecipeHomeScreen(navController, list[index])
+                    }
                 }
             }
         }
-        item {
-            LazyRow(
-                modifier = Modifier
-                    .fillParentMaxWidth()
-                    .height(350.dp),
-                //.background(Color.Cyan),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceAround
 
-            ) {
-                items(countRecipe){
-                    CardRecipeHomeScreen(navController)
-                }
-            }
-        }
+//        item {
+//            if (recipesToDisplay.isNullOrEmpty()) {
+//                recipesToDisplay?.let { list ->
+//                    LazyRow(
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .height(350.dp),
+//                        verticalAlignment = Alignment.CenterVertically,
+//                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+//                        contentPadding = PaddingValues(horizontal = 16.dp)
+//                    ) {
+////                        items(recipesToDisplay.orEmpty()) { recipe ->
+////                            CardRecipeHomeScreen(navController, recipe)
+////                        }
+//                        items(list.size) { index ->
+//                            CardRecipeHomeScreen(navController, list[index])
+//                        }
+//                    }
+//                }
+//            } else {
+//            recipesRandom10?.let { list ->
+//                LazyRow(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .height(350.dp),
+//                    verticalAlignment = Alignment.CenterVertically,
+//                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+//                    contentPadding = PaddingValues(horizontal = 16.dp)
+//                ) {
+//                    items(list.size) { index ->
+//                        CardRecipeHomeScreen(navController, list[index])
+//                    }
+//                }
+//            }
+//            }
+//        }
+
+//        item {
+//            LazyRow(
+//                modifier = Modifier
+//                    .fillParentMaxWidth()
+//                    .height(350.dp),
+//                //.background(Color.Cyan),
+//                verticalAlignment = Alignment.CenterVertically,
+//                horizontalArrangement = Arrangement.SpaceAround
+//
+//            ) {
+//                items(countRecipe){
+//                    CardRecipeHomeScreen(navController)
+//                }
+//            }
+//        }
 
     }
 }
@@ -243,7 +351,61 @@ fun CategoryButton(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SearchRecipeByIngredientsTextField(
+    onAddIngredient: (String) -> Unit
+) {
+    var inputTextIngredients by rememberSaveable { mutableStateOf("") }
 
+    Box(modifier = Modifier
+        .fillMaxWidth()
+        .padding(25.dp,10.dp)
+        .height(70.dp)
+        .clip(RoundedCornerShape(10.dp))
+        .background(Gray100)){
+        Row(modifier = Modifier
+            .padding(5.dp),
+            verticalAlignment = Alignment.CenterVertically) {
+            //SearchTextField(modifier = Modifier)
+
+            TextField(
+                value = inputTextIngredients,
+                onValueChange = { inputTextIngredients = it },
+                placeholder = { Text("Введіть текст...", color = Gray400,fontSize = 14.sp,lineHeight = 14.sp ) },
+                colors = TextFieldDefaults.textFieldColors(
+                    containerColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent,
+                    unfocusedTextColor = Gray400,
+                    focusedTextColor = Slate900
+
+                ),
+                singleLine = true,
+                textStyle = TextStyle(
+                    fontSize = 14.sp,
+                    lineHeight = 14.sp
+                )
+            )
+            //VerticalDivider(modifier = Modifier.size(8.dp))
+            Spacer(modifier = Modifier.size(8.dp))
+            Icon(modifier = Modifier
+                .size(40.dp)
+                .padding(5.dp)
+                .clickable {
+                    if (inputTextIngredients.isNotBlank()) {
+                        onAddIngredient(inputTextIngredients.trim())
+                        //inputTextIngredients = "" // очистити поле після додавання
+                    }
+                },
+                painter = painterResource(R.drawable.search),
+                contentDescription = stringResource(R.string.home_search_ingredient),
+                tint = Gray400
+            )
+        }
+    }
+}
 //@OptIn(ExperimentalMaterial3Api::class)
 //@Composable
 //fun SearchTextField(modifier: Modifier) {
@@ -270,17 +432,46 @@ fun CategoryButton(
 //    )
 //}
 @Composable
-fun CardFridge(){
-    val ingredients = listOf(
+fun CardFridge(onIngredientClick: (String) -> Unit){
+    val ingredientCard = listOf(
         "Meat" to "🥩",
         "Chicken" to "🍗",
         "Fish" to "🐟",
         "Milk" to "🥛",
         "Flour" to "😶‍🌫️",
         "Sugar" to "🍪",
-        "Egg" to "🥚",
+        "Eggs" to "🥚",
         "Broccoli" to "🥦",
-        "Potato" to "🥔"
+        "Potato" to "🥔",
+        //"Salmon",
+        //"Beef",
+        //"Pork",
+        //"Avocado",
+//        "Asparagus",
+//        "Bacon",
+//        "Basil",
+//        "Basmati Rice",
+//        "Black Pepper",
+//        "Bread",
+//        "Brown Sugar",
+//        "Butter",
+//        "Cacao",
+//        "Carrots",
+//        "Cheese",
+//        "Chilli",
+//        "Cream",
+//        "Cucumber",
+//        "Honey",
+//        "Lemon",
+//        "Mushrooms",
+//        "Onion",
+//        "Rice",
+//        "Sausages",
+//        "Spinach",
+//        "Spaghetti",
+//        "Tomato",
+//        "Tuna",
+//        "Duck",
     )
     Column {
         Text(text = "What's in your fridge?",
@@ -294,16 +485,24 @@ fun CardFridge(){
             contentPadding = PaddingValues(0.dp),
             modifier = Modifier.fillMaxWidth().height(100.dp)
         ) {
-            items(ingredients.size) { ingredient ->
+            items(ingredientCard.size) { ingredient ->
                 IngredientCard(
-                    ingredient = ingredients[ingredient].first,
-                    imageRes = ingredients[ingredient].second)
+                    ingredient = ingredientCard[ingredient].first,
+                    imageRes = ingredientCard[ingredient].second,
+                    onIngredientClick
+                    //ingredients
+                )
             }
         }
     }
 }
 @Composable
-fun IngredientCard(ingredient: String, imageRes: String) {
+fun IngredientCard(
+    ingredient: String,
+    imageRes: String,
+    onClick: (String) -> Unit
+    //ingredients: MutableList<String>
+) {
     Box(
         modifier = Modifier
             .width(100.dp)
@@ -311,6 +510,11 @@ fun IngredientCard(ingredient: String, imageRes: String) {
             .clip(RoundedCornerShape(10.dp))
             .background(Gray100)
             .padding(4.dp)
+            .clickable {
+                onClick(ingredient)
+//                ingredients.add(ingredient)
+//                Log.d("AAAA LIST CARD", ingredients.toString())
+            }
     ) {
         Row (
             modifier = Modifier.padding(6.dp).align(Alignment.Center),
@@ -332,7 +536,8 @@ fun IngredientCard(ingredient: String, imageRes: String) {
 
 @Composable
 fun CardRecipeHomeScreen(
-    navController: NavHostController
+    navController: NavHostController,
+    recipe: RecipeShort
 ){
     Card(modifier = Modifier
         .width(300.dp)
@@ -362,7 +567,7 @@ fun CardRecipeHomeScreen(
 
         ) {
             AsyncImage(
-                model = "https://www.themealdb.com/images/media/meals/usywpp1511189717.jpg",
+                model = recipe.thumbnail,
                 contentDescription = "Зображення з Інтернету",
                 modifier = Modifier
                     .fillMaxWidth()
@@ -370,25 +575,27 @@ fun CardRecipeHomeScreen(
                     //.clip(CircleShape), // Обрізає у круглу форму
                 contentScale = ContentScale.Crop
             )
-            Spacer(modifier = Modifier.size(10.dp))
+            //Spacer(modifier = Modifier.size(10.dp))
             Text(
-                text = "Chilli prawn linguine",
+                text = recipe.name,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = Slate900,
-                modifier = Modifier.padding(8.dp)
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(8.dp).height(40.dp)
                 )
             //Spacer(modifier = Modifier.size(5.dp))
             Row(
                 modifier = Modifier.fillMaxWidth().padding(10.dp,10.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                //horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.End
             ) {
-                Text(
-                    text = "Pasta, Italian",
-                    color = Slate400,
-                    fontSize = 12.sp
-                    )
+//                Text(
+//                    text = "Pasta, Italian",
+//                    color = Slate400,
+//                    fontSize = 12.sp
+//                    )
                 //Spacer(modifier = Modifier.weight(10.dp))
                 Icon(
                     imageVector = if(isSave) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
