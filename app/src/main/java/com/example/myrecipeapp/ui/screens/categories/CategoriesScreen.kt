@@ -16,6 +16,9 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -24,19 +27,29 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.myrecipeapp.R
 import com.example.myrecipeapp.data.local.Category
 import com.example.myrecipeapp.data.local.categoryList
+import com.example.myrecipeapp.domain.model.Categories
 import com.example.myrecipeapp.ui.components.BackButton
 import com.example.myrecipeapp.ui.components.SearchButton
+import com.example.myrecipeapp.ui.screens.home.HomeViewModel
 import com.example.myrecipeapp.ui.theme.Slate900
 import com.example.myrecipeapp.ui.theme.White
 
 @Composable
 fun CategoriesScreen(
-    navController: NavHostController
+    navController: NavHostController,
+    homeViewModel: HomeViewModel = hiltViewModel()
 ){
+    val categoriesRecipes by homeViewModel.categories.observeAsState()
+    //val recipesByCategory by homeViewModel.searchRecipesByCategory.observeAsState()
+    val selectedCategory by homeViewModel.selectedCategory.observeAsState()
+    LaunchedEffect(Unit) {
+        homeViewModel.fetchCategoriesOnce()
+    }
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -65,10 +78,13 @@ fun CategoriesScreen(
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
                 contentPadding = PaddingValues(15.dp),
-                modifier = Modifier.fillParentMaxSize()
+                modifier = Modifier
+                    .fillParentMaxSize()
             ) {
-                items(categoryList.size){i ->
-                    RecipeCategoryCardComponent(navController,categoryList[i])
+                categoriesRecipes?.let {
+                    items(it.size){ i ->
+                        RecipeCategoryCardComponent(navController,it[i])
+                    }
                 }
             }
         }
@@ -81,8 +97,10 @@ fun CategoriesScreen(
 @Composable
 fun RecipeCategoryCardComponent(
     navController: NavHostController,
-    category: Category
+    category: Categories,
+
 ){
+
     Card(
         modifier = Modifier
             .padding(10.dp)
@@ -95,7 +113,7 @@ fun RecipeCategoryCardComponent(
                 .fillMaxSize()
         ){
             Image(
-                painter = painterResource(category.imageResId),
+                painter = painterResource(R.drawable.beef),//painterResource(category.strCategory),
                 contentDescription = stringResource(R.string.beef_image),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -109,17 +127,21 @@ fun RecipeCategoryCardComponent(
                 verticalArrangement = Arrangement.Bottom
             ){
                 Text(
-                    category.name,
+                    category.strCategory,
                     fontSize = 18.sp,
                     color = White
                 )
                 //Spacer(modifier = Modifier.size(2.dp))
-                Text(
-                    "16000 recipes",
-                    fontSize = 12.sp,
-                    color = White
-                )
+//                Text(
+//                    text = recipesByCategory?.size.toString()+" recipes",
+//                    fontSize = 12.sp,
+//                    color = White
+//                )
             }
         }
     }
 }
+
+
+
+

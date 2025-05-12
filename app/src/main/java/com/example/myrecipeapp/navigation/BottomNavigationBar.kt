@@ -55,6 +55,8 @@ fun NavigationGraph(
         composable(AppRoute.RecipeScreen.route) {
             RecipeScreen(navController)
         }
+
+
 }
 
 //@Composable

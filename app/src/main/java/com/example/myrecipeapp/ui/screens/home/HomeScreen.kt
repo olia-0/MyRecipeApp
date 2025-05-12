@@ -84,7 +84,8 @@ import com.example.myrecipeapp.ui.theme.Slate900
 import com.example.myrecipeapp.ui.theme.White
 
 //@RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
-@OptIn(ExperimentalMaterial3Api::class)
+//@OptIn(ExperimentalMaterial3Api::class)
+//@Preview(showSystemUi = true)
 @Composable
 fun HomeScreen(
     navController: NavHostController,
@@ -93,24 +94,26 @@ fun HomeScreen(
     val recipesRandom10 by homeViewModel.randomRecipes.observeAsState()
     val recipesByIngredients by homeViewModel.searchRecipesByIngredients.observeAsState()
     val selectedIngredients by homeViewModel.ingredients.observeAsState(emptyList())
-//    val ingredients = remember {
-//        mutableListOf("")
-//    }
-
-
-//    LaunchedEffect(key1 = recipesRandom10) {
-//        if (recipesRandom10.isNullOrEmpty()) {
-//            homeViewModel.fetchRandomRecipe()
-//        }
-//    }
+    val recipesByCategoryIngredients by homeViewModel.searchRecipesByCategoryIngredients.observeAsState()
+    val categoriesRecipes by homeViewModel.categories.observeAsState()
+    val selectedCategory by homeViewModel.selectedCategory.observeAsState()
     LaunchedEffect(Unit) {
+        //homeViewModel.fetchRandomRecipe()
         if (recipesRandom10.isNullOrEmpty()) {
             homeViewModel.fetchRandomRecipe()
         }
-
+        homeViewModel.fetchCategoriesOnce()
+        //homeViewModel.search()
     }
-    val recipesToDisplay = recipesByIngredients ?: recipesRandom10
-    Log.d("AAAA LIST CARD", recipesToDisplay.toString())
+
+    val recipesToDisplay by homeViewModel.recipesResult.observeAsState()
+
+    //val recipesToDisplay = recipesByCategoryIngredients ?: recipesByIngredients ?: recipesRandom10
+    Log.d("AAAA CARD", recipesToDisplay.toString())
+    Log.d("AAAA Ingredients", selectedIngredients.toString())
+    Log.d("AAAA Categories", categoriesRecipes.toString())
+    Log.d("AAAA SearchCateINgre", recipesByCategoryIngredients.toString())
+
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -153,93 +156,81 @@ fun HomeScreen(
                     }
                 }
                 //VerticalDivider(modifier = Modifier.padding(20.dp))
-                CategoryButton(navController)
-//                Image(
-//                    painter = painterResource(id = R.drawable.notification),
-//                    contentDescription = stringResource(id = R.string.home_button),
-//                    modifier = Modifier.size(40.dp)
-//                )
+                //CategoryButton(navController)
+                Image(
+                    painter = painterResource(id = R.drawable.notification),
+                    contentDescription = stringResource(id = R.string.home_button),
+                    modifier = Modifier.size(40.dp)
+                )
             }
         }
         item {
             SearchRecipeByIngredientsTextField(
-                onAddIngredient = { ingredient ->
-                    //onIngredientClick = { homeViewModel.addIngredient(it) }
-                    //selectedIngredients.add(ingredient)
-                    //homeViewModel.addIngredient(ingredient)
-                    //homeViewModel.searchByIngredients(selectedIngredients)
-                    homeViewModel.searchByIngredients(ingredient)
+                onAddIngredient = {
+                    ingredient -> homeViewModel.onIngredientTextInput(ingredient)
                 }
             )
-//            Box(modifier = Modifier
-//                .fillParentMaxWidth()
-//                .padding(25.dp,10.dp)
-//                .height(70.dp)
-//                .clip(RoundedCornerShape(10.dp))
-//                .background(Gray100)){
-//                Row(modifier = Modifier
-//                    .padding(5.dp),
-//                    verticalAlignment = Alignment.CenterVertically) {
-//                    //SearchTextField(modifier = Modifier)
-//
-//                    TextField(
-//                        value = inputTextIngredients,
-//                        onValueChange = { inputTextIngredients = it },
-//                        placeholder = { Text("Введіть текст...", color = Gray400,fontSize = 14.sp,lineHeight = 14.sp ) },
-//                        colors = TextFieldDefaults.textFieldColors(
-//                            containerColor = Color.Transparent,
-//                            focusedIndicatorColor = Color.Transparent,
-//                            unfocusedIndicatorColor = Color.Transparent,
-//                            disabledIndicatorColor = Color.Transparent,
-//                            unfocusedTextColor = Gray400,
-//                            focusedTextColor = Slate900
-//
-//                        ),
-//                        singleLine = true,
-//                        textStyle = TextStyle(
-//                            fontSize = 14.sp,
-//                            lineHeight = 14.sp
-//                        )
-//                    )
-//                    //VerticalDivider(modifier = Modifier.size(8.dp))
-//                    Spacer(modifier = Modifier.size(8.dp))
-//                    Icon(modifier = Modifier.size(40.dp).padding(5.dp),
-//                        painter = painterResource(R.drawable.search),
-//                        contentDescription = stringResource(R.string.home_search_ingredient),
-//                        tint = Gray400
-//                    )
-//                }
-//            }
-        }
-        item {
-            CardFridge(onIngredientClick = { homeViewModel.addIngredient(it) })
-//            LazyHorizontalGrid(
-//                rows = GridCells.Fixed(2), // 2 стовпці
-//                contentPadding = PaddingValues(top = 8.dp),
-//                modifier = Modifier.fillMaxWidth().height(60.dp).background(Color.Cyan)
-//            ) {
-//               items(100) {
-//                   Text(text = "Ola1",
-//                       fontSize = 16.sp,
-//                       color = Slate900,
-//                       lineHeight = 19.sp
-//                   )
-//
-//               }
-//            }
-        }
-        item {
-//            val recipesToDisplay = if (!recipesByIngredients.isNullOrEmpty()) {
-//                recipesByIngredients
-//            } else {
-//                recipesRandom10
-//            }
 
+        }
+        item {
+            CardFridge(
+                selectedIngredients,
+                onIngredientClick = { homeViewModel.addIngredient(it) }
+            )
+        }
+        item {
+            LazyRow(
+                modifier = Modifier
+                    //.background(Color.Magenta)
+                    .fillMaxWidth()
+                    .padding(20.dp,0.dp),
+                    //.background(Color.Red),
+                verticalAlignment = Alignment.CenterVertically,
+                //horizontalArrangement = A
+            ){
+                item {
+                    val isSelectedAll = selectedCategory == null
+                    Text(
+                        text = "All",
+                        fontSize = 14.sp,
+                        color = if(isSelectedAll) Slate900  else Slate400,
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .clickable {
+                                navController.navigate(route = "categories")
+                                //homeViewModel.addCategory(it[index])
+                                //isSelected = !isSelected
+                            }
+                    )
+                }
+                categoriesRecipes?.let {
+                    items(it.size){index ->
+                        var isSelected = it[index] == selectedCategory
+                        Text(
+                            text = it[index].strCategory,
+                            fontSize = 14.sp,
+                            color = if(isSelected) Slate900  else Slate400,
+                            fontWeight = FontWeight.Medium,
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .clickable {
+                                    homeViewModel.addCategory(it[index])
+                                    isSelected = !isSelected
+                                    //isSelectedAll = false
+                                }
+                        )
+                    }
+                }
+            }
+        }
+        item {
             recipesToDisplay?.let { list ->
                 LazyRow(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(350.dp),
+                        .height(300.dp),
+                        //.padding(20.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                     contentPadding = PaddingValues(horizontal = 16.dp)
@@ -306,8 +297,7 @@ fun HomeScreen(
 
     }
 }
-//@Preview(showSystemUi = true)
-//@Preview(showBackground = true )
+
 @Composable
 fun CategoryButton(
     navController: NavHostController
@@ -432,7 +422,10 @@ fun SearchRecipeByIngredientsTextField(
 //    )
 //}
 @Composable
-fun CardFridge(onIngredientClick: (String) -> Unit){
+fun CardFridge(
+    ingredients: List<String>,
+    onIngredientClick: (String) -> Unit
+){
     val ingredientCard = listOf(
         "Meat" to "🥩",
         "Chicken" to "🍗",
@@ -473,23 +466,37 @@ fun CardFridge(onIngredientClick: (String) -> Unit){
 //        "Tuna",
 //        "Duck",
     )
-    Column {
+    Column(
+        modifier = Modifier
+            //.background(Color.Yellow)
+            .fillMaxWidth()
+            .height(200.dp)
+            .padding(20.dp)
+            //.background(Color.Cyan)
+    ){
         Text(text = "What's in your fridge?",
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
             color = Slate900,
-            modifier = Modifier.padding(8.dp)
+
         )
+        Spacer(modifier = Modifier.size(20.dp))
         LazyHorizontalGrid(
             rows = GridCells.Fixed(2), // 2 стовпці
             contentPadding = PaddingValues(0.dp),
-            modifier = Modifier.fillMaxWidth().height(100.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp)//.padding(20.dp)
         ) {
-            items(ingredientCard.size) { ingredient ->
+            items(ingredientCard.size) { index ->
+                val nameIngredient = ingredientCard[index].first
+                val emoji = ingredientCard[index].second
+                val isSelected =  nameIngredient in ingredients
                 IngredientCard(
-                    ingredient = ingredientCard[ingredient].first,
-                    imageRes = ingredientCard[ingredient].second,
-                    onIngredientClick
+                    ingredient = nameIngredient,
+                    imageRes = emoji,
+                    isSelected = isSelected,
+                    onClick = onIngredientClick
                     //ingredients
                 )
             }
@@ -500,15 +507,18 @@ fun CardFridge(onIngredientClick: (String) -> Unit){
 fun IngredientCard(
     ingredient: String,
     imageRes: String,
+    isSelected: Boolean,
     onClick: (String) -> Unit
     //ingredients: MutableList<String>
 ) {
+    val backgroundColor = if (isSelected) MyPrimeryOrang else Gray100
     Box(
         modifier = Modifier
-            .width(100.dp)
+            .width(110.dp)
+            .height(38.dp)
             .padding(2.dp,3.dp)
             .clip(RoundedCornerShape(10.dp))
-            .background(Gray100)
+            .background(backgroundColor)
             .padding(4.dp)
             .clickable {
                 onClick(ingredient)
@@ -521,9 +531,17 @@ fun IngredientCard(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = ingredient, fontSize = 10.sp, fontWeight = FontWeight.Bold, color = Gray400)
-            Spacer(modifier = Modifier.width(5.dp))
-            Text(text = imageRes, fontSize = 14.sp)
+            Text(
+                text = ingredient + imageRes,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Medium,
+                color = Gray400
+            )
+            //Spacer(modifier = Modifier.width(5.dp))
+//            Text(
+//                text = imageRes,
+//                fontSize = 14.sp
+//            )
 //            Image(
 //                painter = painterResource(id = imageRes),
 //                contentDescription = ingredient,

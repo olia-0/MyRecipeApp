@@ -2,8 +2,9 @@ package com.example.myrecipeapp.domain.usecase
 
 import com.example.myrecipeapp.domain.model.RecipeShort
 import com.example.myrecipeapp.domain.repository.RecipeRepository
+import javax.inject.Inject
 
-class SearchRecipesByCategoryAndIngredientsUseCase(
+class SearchRecipesByCategoryAndIngredientsUseCase @Inject constructor(
     private val repository: RecipeRepository
 ) {
     suspend operator fun invoke(category: String, ingredients: List<String>): List<RecipeShort> {

@@ -1,9 +1,7 @@
 package com.example.myrecipeapp.data.mapper
 
-import com.example.myrecipeapp.data.remote.dto.CategoriesDTO
 import com.example.myrecipeapp.data.remote.dto.MealDto
 import com.example.myrecipeapp.data.remote.dto.RecipeShortDto
-import com.example.myrecipeapp.domain.model.Category
 import com.example.myrecipeapp.domain.model.Meal
 import com.example.myrecipeapp.domain.model.RecipeShort
 
@@ -134,14 +132,14 @@ object RecipeMapper {
 //        )
 //    }
 
-    fun toDto(model: Category): CategoriesDTO {
-        return CategoriesDTO(
-            idCategory = model.idCategory,
-            strCategory = model.strCategory,
-            strCategoryThumb = model.strCategoryThumb,
-            strCategoryDescription = model.strCategoryDescription
-        )
-    }
+//    fun toDto(model: Category): CategoriesDTO {
+//        return CategoriesDTO(
+//            idCategory = model.idCategory,
+//            strCategory = model.strCategory,
+//            strCategoryThumb = model.strCategoryThumb,
+//            strCategoryDescription = model.strCategoryDescription
+//        )
+//    }
 }
 fun RecipeShortDto.toMealShort(): RecipeShort {
     return RecipeShort(id = idMeal, name = strMeal, thumbnail = strMealThumb)

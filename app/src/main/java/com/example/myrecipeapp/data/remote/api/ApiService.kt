@@ -1,5 +1,6 @@
 package com.example.myrecipeapp.data.remote.api
 
+import com.example.myrecipeapp.data.remote.dto.CategoriesListDto
 import com.example.myrecipeapp.data.remote.dto.MealsListDto
 import com.example.myrecipeapp.data.remote.dto.RecipeShortListDto
 import retrofit2.http.GET
@@ -27,4 +28,7 @@ interface ApiService  {
         @Query("c") category: String,
         @Query("i") ingredient: String
     ): RecipeShortListDto
+
+    @GET("list.php?c=list")
+    suspend fun getCategories(): CategoriesListDto
 }
