@@ -242,7 +242,8 @@ fun Recipe.toSavedRecipeEntity(imagePath: String): SavedRecipeEntity {
         ingredients = ingredients,
         measures = measures,
         steps = instructionsRecipe ?: "",
-        imagePath = imagePath
+        imagePath = imagePath,
+        imageSize = 0
     )
 }
 
@@ -269,7 +270,8 @@ fun Recipe.toViewedEntity(): ViewedRecipeEntity {
         ingredients = ingredients,
         measures = measures,
         steps = instructionsRecipe ?: "",
-        imagePath = photoRecipe ?: ""
+        imagePath = photoRecipe ?: "",
+        imageSizeBytes = 0
     )
 }
 

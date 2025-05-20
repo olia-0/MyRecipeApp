@@ -46,6 +46,9 @@ interface ViewedRecipeDao {
     @Query("DELETE FROM viewed_recipes")
     suspend fun clearAll()
 
+    @Query("DELETE FROM viewed_recipes WHERE viewedAt < :cutoffTime")
+    suspend fun deleteOlderThan(cutoffTime: Long)
+
     @Query("SELECT COUNT(*) FROM viewed_recipes")
     suspend fun getCount(): Int
 

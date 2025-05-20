@@ -11,5 +11,8 @@ data class SavedRecipeEntity(
     val ingredients: String,
     val measures: String,
     val steps: String,
-    val imagePath: String
+    val imagePath: String,
+
+    //val lastModified: Long = System.currentTimeMillis(),
+    val imageSize: Long //// розмір файлу для контролю обсягу
 )

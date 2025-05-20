@@ -85,13 +85,13 @@ fun RecipeScreen(
 
     LaunchedEffect(Unit) {
         viewModel.fetchMealById("52772")
-        meals?.let { viewModel.onRecipeViewed(it) }
+        meals?.let { viewModel.saveRecipeViewedWithImage(context,it) }
         meals?.let { Log.d("AAAAAA Name Recipe", it.nameRecipe) }
     }
     LaunchedEffect(meals) {
         meals?.let {
             isSaved = viewModel.isRecipeSaved(it.idRecipe)
-            viewModel.onRecipeViewed(it)
+            viewModel.saveRecipeViewedWithImage(context,it)
         }
     }
 

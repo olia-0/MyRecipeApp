@@ -65,18 +65,6 @@ class RecipeViewModel @Inject constructor(
         }
     }
 
-    fun fetchMealById1(id: String) {
-        viewModelScope.launch {
-            val meal = getMealByIdUseCase(id)
-            _selectedMeal.value = meal//getMealByIdUseCase(id)
-            meal.instructionsRecipe?.let {
-                _mealInstructions.value = mealInstructionsUseCase.splitInstructions(it)
-            }
-            youtubeId = idVideoUseCase.extractYouTubeId(selectedMeal.value?.youtubeRecipe)
-            Log.d("AAAA Video 1 ",youtubeId ?: "ooops")
-            //val youtubeId = idVideoUseCase.extractYouTubeId(meal.youtubeRecipe)
-        }
-    }
     fun fetchMealById(id: String) {
         viewModelScope.launch {
             val meal = getRecipeByIdWithFallbackUseCase(id)
@@ -96,7 +84,7 @@ class RecipeViewModel @Inject constructor(
                         it, recipe.idRecipe)
                 }
                 val savedEntity = imagePath?.let { recipe.toSavedRecipeEntity(it) }
-                savedEntity?.let { saveRecipeUseCase(it) }
+                savedEntity?.let { saveRecipeUseCase(context,it,recipe.photoRecipe ?: "") }
             }catch (e: Exception){
                 Log.d("Помилка в збережені фото рецепту", e.toString())
             }
@@ -114,9 +102,9 @@ class RecipeViewModel @Inject constructor(
         isRecipeSavedUseCase(id)
     }
 
-    fun onRecipeViewed(recipe: Recipe) {
+    fun saveRecipeViewedWithImage(context: Context,recipe: Recipe) {
         viewModelScope.launch {
-            saveViewedRecipeUseCase(recipe)
+            saveViewedRecipeUseCase(context,recipe, recipe.photoRecipe ?: "")
         }
     }
 

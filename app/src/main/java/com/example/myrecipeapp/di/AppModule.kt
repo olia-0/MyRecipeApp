@@ -2,6 +2,7 @@ package com.example.myrecipeapp.di
 
 import android.content.Context
 import androidx.room.Room
+import com.example.myrecipeapp.data.datastore.SettingsDataStore
 import com.example.myrecipeapp.data.local.RecipeDatabase
 import com.example.myrecipeapp.data.local.dao.SavedRecipeDao
 import com.example.myrecipeapp.data.local.dao.ViewedRecipeDao
@@ -27,9 +28,10 @@ object AppModule {
     fun provideMealRepository(
         apiService: ApiService,
         daoSaved: SavedRecipeDao,
-        daoViewed: ViewedRecipeDao
+        daoViewed: ViewedRecipeDao,
+        settingsDataStore: SettingsDataStore
     ): RecipeRepository {
-        return RecipeRepositoryImpl(apiService, daoSaved, daoViewed)
+        return RecipeRepositoryImpl(apiService, daoSaved, daoViewed,settingsDataStore)
     }
     @Provides
     fun provideCategoriesRepository(apiService: ApiService): CategoriesRepository {

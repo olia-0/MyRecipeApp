@@ -33,6 +33,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.myrecipeapp.data.mapper.toRecipeShort
+import com.example.myrecipeapp.ui.components.SearchRecipeByNameTextField
 import com.example.myrecipeapp.ui.components.SearchRecipeTextField
 import com.example.myrecipeapp.ui.components.SearchTextField
 import com.example.myrecipeapp.ui.screens.home.CardRecipeHomeScreen
@@ -53,15 +54,16 @@ fun SearchScreen(
     //Text("SearchScreen")
     LazyColumn(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(15.dp),
+            .fillMaxSize(),
+            //.padding(15.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         item {
             Spacer(modifier = Modifier.size(20.dp))
             //SearchTextField(modifier = Modifier)
-            SearchRecipeTextField()
+            //SearchRecipeTextField()
+            SearchRecipeByNameTextField()
         }
         item {
             Row(

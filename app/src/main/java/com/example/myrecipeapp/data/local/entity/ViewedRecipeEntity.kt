@@ -12,5 +12,6 @@ data class ViewedRecipeEntity(
     val measures: String,
     val steps: String,
     val imagePath: String,
-    val viewedAt: Long = System.currentTimeMillis() // час перегляду
+    val viewedAt: Long = System.currentTimeMillis(),// час перегляду
+    val imageSizeBytes: Long
 )

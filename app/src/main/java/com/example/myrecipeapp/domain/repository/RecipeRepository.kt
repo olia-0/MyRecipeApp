@@ -32,4 +32,9 @@ interface RecipeRepository  {
     ////////Viewed
     suspend fun saveViewedRecipe(recipe: Recipe)
     fun getViewedRecipes(): Flow<List<Recipe>>
+    //
+    suspend fun saveRecipe2(context: Context,recipe: SavedRecipeEntity, imageUrl: String)
+    suspend fun saveViewedRecipe2(context: Context,recipe: Recipe, imageUrl: String)
+    ///
+    suspend fun getSavedRecipesSizeInfo(): Pair<Long, Long>
 }
