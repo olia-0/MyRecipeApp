@@ -2,7 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    id("com.google.devtools.ksp") version "1.9.10-1.0.13" apply false
+    //id("com.google.devtools.ksp") version "1.9.10-1.0.13" apply false
+    id("com.google.devtools.ksp") version "2.0.0-1.0.21"
 
 
     //id("dagger.hilt.android.plugin")
@@ -65,6 +66,7 @@ dependencies {
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.runtime.livedata)
+    implementation(libs.androidx.work.runtime.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -75,7 +77,7 @@ dependencies {
 
     implementation(libs.hilt.android)
 
-    //implementation(libs.javapoet)
+    //implementation(libs.javapoet)..Не пам'ятаю щоб використовувала
     implementation("com.squareup:javapoet:1.13.0")
     //Coil
 
@@ -91,18 +93,19 @@ dependencies {
 
     //Room
 
-    //implementation(libs.androidx.room.ktx)
-    //implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.room.runtime)
     //kapt(libs.androidx.room.compiler)
     //add("ksp", "androidx.room:room-compiler:2.5.2")
-    //ksp(libs.androidx.room.compiler.v250)
+    ksp(libs.androidx.room.compiler.v250)
 
     // Hilt
     //implementation(libs.hilt.android)
 //    implementation(libs.hilt.android)
 //    kapt(libs.hilt.compiler)
     implementation(libs.hilt.android.v242)
-    kapt(libs.hilt.compiler.v242)
+    //kapt(libs.hilt.compiler.v242)
+    ksp(libs.hilt.compiler.v242)
 
     // Hilt для ViewModel
 //    implementation("androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03")
@@ -111,11 +114,11 @@ dependencies {
     // Для інтеграції з Jetpack Compose (якщо використовуєш Compose)
     implementation(libs.androidx.hilt.navigation.compose)
 
-    // Для Moshi
+    // Для Moshi ..Не пам'ятаю щоб використовувала
     implementation(libs.moshi)
     implementation(libs.moshi.kotlin)
 
-// Для конвертера Moshi в Retrofit
+// Для конвертера Moshi в Retrofit ..Не пам'ятаю щоб використовувала
     implementation(libs.converter.moshi)
 
     ///
@@ -124,4 +127,8 @@ dependencies {
     /////YouTube
     implementation(libs.core)
     implementation (libs.androidx.lifecycle.runtime.ktx.v251)
+
+    ////Glide
+    implementation(libs.glide)
+    //kapt 'com.github.bumptech.glide:compiler:4.16.0'
 }

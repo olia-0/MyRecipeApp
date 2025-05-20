@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,6 +26,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,9 +41,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.myrecipeapp.R
+import com.example.myrecipeapp.domain.model.Recipe
 import com.example.myrecipeapp.ui.screens.category.CardRecipeCategory
 import com.example.myrecipeapp.ui.theme.Gray300
 import com.example.myrecipeapp.ui.theme.Gray400
@@ -51,9 +55,15 @@ import com.example.myrecipeapp.ui.theme.Slate900
 import com.example.myrecipeapp.ui.theme.White
 
 @Composable
-fun SavedScreen(navController: NavHostController) {
+fun SavedScreen(
+    navController: NavHostController,
+    viewModel: SavedViewModel = hiltViewModel()
+) {
+    val recipes by viewModel.savedRecipes.collectAsState()
+
+
     //Text(text = "SavedScreen", fontSize = 100.sp)
-    TabSaved(navController)
+    TabSaved(navController,recipes)
     //CardRecipeCategorySaved()//navController)
 
 }
@@ -61,7 +71,8 @@ fun SavedScreen(navController: NavHostController) {
 //@Preview(showSystemUi = true)
 @Composable
 fun TabSaved(
-    navController: NavHostController
+    navController: NavHostController,
+    recipes: List<Recipe>
 ){
     val tabs = listOf("Saved", "My recipe")
     var selectedTabIndex by remember { mutableStateOf(0) }
@@ -82,22 +93,23 @@ fun TabSaved(
 
         // Відображення таблиці залежно від вкладки
         when (selectedTabIndex) {
-            0 -> SavedTable(navController)
+            0 -> SavedTable(navController, recipes = recipes)
             1 -> UserRecipeTable(navController)
         }
     }
 }
 @Composable
 fun SavedTable(
-    navController: NavHostController
+    navController: NavHostController,
+    recipes: List<Recipe>
 ){
     LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        contentPadding = PaddingValues(5.dp,),
+        columns = GridCells.Fixed(1),
+        contentPadding = PaddingValues(10.dp,),
         modifier = Modifier.fillMaxSize()//.padding(8.dp)
     ) {
-        items(14){
-            CardRecipeCategorySaved(navController)
+        items(recipes.size){index ->
+            CardRecipeCategorySaved(navController,recipes[index])
         }
     }
 }
@@ -111,7 +123,7 @@ fun UserRecipeTable(
         modifier = Modifier.fillMaxSize()//.padding(8.dp)
     ) {
         items(14){
-            CardRecipeCategorySaved(navController)
+            CardRecipeCategorySaved(navController,null)
         }
     }
 }
@@ -119,12 +131,13 @@ fun UserRecipeTable(
 
 @Composable
 fun CardRecipeCategorySaved(
-    navController: NavHostController
+    navController: NavHostController,
+    recipe: Recipe?
 ){
     Card(modifier = Modifier
         .width(200.dp)
         //.fillMaxWidth()
-        .height(200.dp)
+        .height(250.dp)
         .padding(10.dp)
         .shadow(
             elevation = 10.dp, // Висота тіні
@@ -148,17 +161,17 @@ fun CardRecipeCategorySaved(
 
         ) {
             AsyncImage(
-                model = "https://www.themealdb.com/images/media/meals/usywpp1511189717.jpg",
+                model = recipe?.photoRecipe ?: "https://www.themealdb.com/images/media/meals/usywpp1511189717.jpg",
                 contentDescription = "Зображення з Інтернету",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(100.dp),
+                    .height(150.dp),
                 //.clip(CircleShape), // Обрізає у круглу форму
                 contentScale = ContentScale.Crop
             )
             Spacer(modifier = Modifier.size(5.dp))
             Text(
-                text = "Chilli prawn linguine",
+                text = recipe?.nameRecipe ?: "Ooops",
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
                 color = Slate900,
@@ -172,7 +185,7 @@ fun CardRecipeCategorySaved(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Italian",
+                    text = recipe?.areaRecipe ?: "",
                     color = Slate400,
                     fontSize = 11.sp
                 )

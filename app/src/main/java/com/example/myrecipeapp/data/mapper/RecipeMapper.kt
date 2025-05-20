@@ -1,8 +1,11 @@
 package com.example.myrecipeapp.data.mapper
 
+import com.example.myrecipeapp.data.local.entity.SavedRecipeEntity
+import com.example.myrecipeapp.data.local.entity.ViewedRecipeEntity
 import com.example.myrecipeapp.data.remote.dto.MealDto
 import com.example.myrecipeapp.data.remote.dto.RecipeShortDto
 import com.example.myrecipeapp.domain.model.Meal
+import com.example.myrecipeapp.domain.model.Recipe
 import com.example.myrecipeapp.domain.model.RecipeShort
 
 object RecipeMapper {
@@ -144,8 +147,11 @@ object RecipeMapper {
 fun RecipeShortDto.toMealShort(): RecipeShort {
     return RecipeShort(id = idMeal, name = strMeal, thumbnail = strMealThumb)
 }
+fun Recipe.toRecipeShort(): RecipeShort {
+    return RecipeShort(id = idRecipe, name = nameRecipe, thumbnail = photoRecipe ?: "")
+}
 
-fun MealDto.toRecipe(): Meal {
+fun MealDto.toRecipe3(): Meal {
     return Meal(
         idRecipe = idMeal,
         nameRecipe = strMeal,
@@ -197,3 +203,88 @@ fun MealDto.toRecipe(): Meal {
         strMeasure20 = strMeasure20,
     )
 }
+
+fun MealDto.toRecipe(): Recipe {
+    val ingredientsList = listOf(
+        strIngredient1, strIngredient2, strIngredient3, strIngredient4, strIngredient5,
+        strIngredient6, strIngredient7, strIngredient8, strIngredient9, strIngredient10,
+        strIngredient11, strIngredient12, strIngredient13, strIngredient14, strIngredient15,
+        strIngredient16, strIngredient17, strIngredient18, strIngredient19, strIngredient20
+    ).filterNot { it.isNullOrBlank() }
+
+    val measuresList = listOf(
+        strMeasure1, strMeasure2, strMeasure3, strMeasure4, strMeasure5,
+        strMeasure6, strMeasure7, strMeasure8, strMeasure9, strMeasure10,
+        strMeasure11, strMeasure12, strMeasure13, strMeasure14, strMeasure15,
+        strMeasure16, strMeasure17, strMeasure18, strMeasure19, strMeasure20
+    ).filterNot { it.isNullOrBlank() }
+
+    return Recipe(
+        idRecipe = idMeal,
+        nameRecipe = strMeal,
+        photoRecipe = strMealThumb,
+        categoryRecipe = strCategory,
+        areaRecipe = strArea,
+        instructionsRecipe = strInstructions,
+        tagsRecipe = strTags,
+        youtubeRecipe = strYoutube,
+        ingredients = ingredientsList.joinToString(","),
+        measures = measuresList.joinToString(",")
+    )
+}
+//////ROOM
+//////////////SAVED
+fun Recipe.toSavedRecipeEntity(imagePath: String): SavedRecipeEntity {
+    return SavedRecipeEntity(
+        id = idRecipe,
+        title = nameRecipe,
+        category = categoryRecipe ?: "",
+        ingredients = ingredients,
+        measures = measures,
+        steps = instructionsRecipe ?: "",
+        imagePath = imagePath
+    )
+}
+
+fun SavedRecipeEntity.toRecipe(): Recipe {
+    return Recipe(
+        idRecipe = id,
+        nameRecipe = title,
+        categoryRecipe = category ?: "",
+        ingredients = ingredients,
+        measures = measures,
+        instructionsRecipe = steps ?: "",
+        photoRecipe = imagePath,
+        youtubeRecipe = null,
+        areaRecipe = null,
+        tagsRecipe = null,
+    )
+}
+/////////////VIEWED
+fun Recipe.toViewedEntity(): ViewedRecipeEntity {
+    return ViewedRecipeEntity(
+        id = idRecipe,
+        title = nameRecipe,
+        category = categoryRecipe ?: "",
+        ingredients = ingredients,
+        measures = measures,
+        steps = instructionsRecipe ?: "",
+        imagePath = photoRecipe ?: ""
+    )
+}
+
+fun ViewedRecipeEntity.toRecipe(): Recipe {
+    return Recipe(
+        idRecipe = id,
+        nameRecipe = title,
+        categoryRecipe = category ?: "",
+        ingredients = ingredients,
+        measures = measures,
+        instructionsRecipe = steps ?: "",
+        photoRecipe = imagePath,
+        youtubeRecipe = null,
+        areaRecipe = null,
+        tagsRecipe = null,
+    )
+}
+

@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 class CategoriesRepositoryImpl @Inject constructor(
     private val apiService: ApiService,
-): CategoriesRepository{
+) : CategoriesRepository {
 
     override suspend fun getCategories(): List<Categories> {
         Log.d("API_DEBUG", apiService.getCategories().toString())

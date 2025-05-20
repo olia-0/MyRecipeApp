@@ -18,6 +18,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -26,9 +28,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import com.example.myrecipeapp.data.mapper.toRecipeShort
 import com.example.myrecipeapp.ui.components.SearchRecipeTextField
 import com.example.myrecipeapp.ui.components.SearchTextField
 import com.example.myrecipeapp.ui.screens.home.CardRecipeHomeScreen
@@ -41,7 +45,11 @@ import com.example.myrecipeapp.ui.theme.White
 
 //@Preview(showSystemUi = true)
 @Composable
-fun SearchScreen(navController: NavHostController = rememberNavController()) {
+fun SearchScreen(
+    navController: NavHostController = rememberNavController(),
+    viewModel: SearchViewModel = hiltViewModel()
+) {
+    val recipes by viewModel.viewedRecipes.collectAsState()
     //Text("SearchScreen")
     LazyColumn(
         modifier = Modifier
@@ -120,9 +128,9 @@ fun SearchScreen(navController: NavHostController = rememberNavController()) {
                 horizontalArrangement = Arrangement.SpaceAround
 
             ) {
-                items(5){
-                    //CardRecipeHomeScreen(navController)
-                    Text("1")
+                items(recipes.size){index ->
+                    CardRecipeHomeScreen(navController,recipes[index].toRecipeShort())
+                    //Text("1")
                 }
             }
         }

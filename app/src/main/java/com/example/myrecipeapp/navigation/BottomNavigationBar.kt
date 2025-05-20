@@ -34,7 +34,8 @@ fun NavigationGraph(
     NavHost(
         navController = navController,
         //startDestination = AppRoute.StartScreen.route)
-        startDestination = AppRoute.HomeScreen.route) {
+        startDestination = AppRoute.SavedScreen.route){
+        //startDestination = AppRoute.HomeScreen.route) {
         composable(AppRoute.HomeScreen.route) {
             HomeScreen(navController)
         }

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
@@ -22,6 +23,8 @@ import com.example.myrecipeapp.R
 @Composable
 fun SavedButton(
     //navController: NavHostController
+    isSaved: Boolean,
+    onClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -34,11 +37,12 @@ fun SavedButton(
             modifier = Modifier
                 .size(30.dp),
             onClick = {
+                onClick()
                 //navController.popBackStack()
             }
         ) {
             Icon(
-                imageVector = Icons.Default.Favorite,
+                imageVector = if(isSaved) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                 contentDescription = stringResource(R.string.icon_button_back),
                 modifier = Modifier
                     .fillMaxSize()

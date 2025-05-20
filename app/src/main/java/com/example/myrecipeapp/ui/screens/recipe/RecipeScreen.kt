@@ -1,6 +1,7 @@
 package com.example.myrecipeapp.ui.screens.recipe
 
 import android.util.Log
+import android.widget.ImageView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,6 +28,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,6 +50,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import com.bumptech.glide.Glide
 import com.example.myrecipeapp.R
 import com.example.myrecipeapp.ui.components.BackButton
 import com.example.myrecipeapp.ui.components.SavedButton
@@ -57,6 +64,9 @@ import com.example.myrecipeapp.ui.theme.White
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+import kotlinx.coroutines.launch
+import java.io.File
+
 
 //@Preview(showSystemUi = true)
 @Composable
@@ -64,20 +74,33 @@ fun RecipeScreen(
     navController: NavHostController,
     viewModel: RecipeViewModel = hiltViewModel()
 ) {
+
     val meals by viewModel.selectedMeal.observeAsState()
     val instructionMeal by viewModel.mealInstructions.observeAsState()
     val videoId = viewModel.youtubeId
 
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    var isSaved by rememberSaveable  { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.fetchMealById("52772")
+        meals?.let { viewModel.onRecipeViewed(it) }
         meals?.let { Log.d("AAAAAA Name Recipe", it.nameRecipe) }
     }
+    LaunchedEffect(meals) {
+        meals?.let {
+            isSaved = viewModel.isRecipeSaved(it.idRecipe)
+            viewModel.onRecipeViewed(it)
+        }
+    }
+
 
 
     LazyColumn {
         item {
             Box() {
+
                 AsyncImage(
                     model = meals?.photoRecipe,
                     contentDescription = "Зображення обраного рецепту з Api",
@@ -97,7 +120,43 @@ fun RecipeScreen(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     BackButton(navController)
-                    SavedButton()
+                    //SavedButton()
+                    meals?.let { currentMeal ->
+                        SavedButton(
+                            isSaved = isSaved,
+                            onClick = {
+                                coroutineScope.launch {
+                                    if (isSaved) {
+                                        viewModel.deleteSavedRecipe(currentMeal.idRecipe)
+                                        Log.d("Кнопка збереження - збережено", currentMeal.nameRecipe)
+                                        isSaved = false
+                                    } else {
+                                        viewModel.saveRecipeWithImage(context, currentMeal)
+                                        Log.d("Кнопка збереження - не збережено", currentMeal.nameRecipe)
+                                        isSaved = true
+                                    }
+                                }
+                            }
+                        )
+                    }
+//                    SavedButton(
+//                        isSaved = isSaved,
+//                        onClick = {
+//                            coroutineScope.launch {
+//                                if (isSaved) {
+//                                    meals?.idRecipe?.let { it1 -> viewModel.deleteSavedRecipe(it1) }
+//                                    isSaved = false
+//                                } else {
+//                                    meals?.let { it1 ->
+//                                        viewModel.saveRecipeWithImage(context,
+//                                            it1
+//                                        )
+//                                    }
+//                                    isSaved = true
+//                                }
+//                            }
+//                        }
+//                    )
                 }
 
 
@@ -129,23 +188,32 @@ fun RecipeScreen(
                     lineHeight = 22.sp,
                     modifier = Modifier.padding(20.dp)
                 )
+                val ingredientList = meals?.ingredients?.split(",") ?: emptyList()
+                val measureList = meals?.measures?.split(",") ?: emptyList()
+
                 Column {
-                    RowIngredient(meals?.strIngredient1,meals?.strMeasure1,1)
-                    RowIngredient(meals?.strIngredient2,meals?.strMeasure2,2)
-                    RowIngredient(meals?.strIngredient3,meals?.strMeasure3,3)
-                    RowIngredient(meals?.strIngredient4,meals?.strMeasure4,4)
-                    RowIngredient(meals?.strIngredient5,meals?.strMeasure5,5)
-                    RowIngredient(meals?.strIngredient6,meals?.strMeasure6,6)
-                    RowIngredient(meals?.strIngredient7,meals?.strMeasure7,7)
-                    RowIngredient(meals?.strIngredient8,meals?.strMeasure8,8)
-                    RowIngredient(meals?.strIngredient9,meals?.strMeasure9,9)
-                    RowIngredient(meals?.strIngredient10,meals?.strMeasure10,10)
-                    RowIngredient(meals?.strIngredient11,meals?.strMeasure11,11)
-                    RowIngredient(meals?.strIngredient12,meals?.strMeasure12,12)
-                    RowIngredient(meals?.strIngredient13,meals?.strMeasure13,13)
-                    RowIngredient(meals?.strIngredient14,meals?.strMeasure14,14)
-                    RowIngredient(meals?.strIngredient15,meals?.strMeasure15,15)
+                    ingredientList.forEachIndexed { index, ingredient ->
+                        val measure = measureList.getOrNull(index)
+                        RowIngredient(ingredient, measure, index + 1)
+                    }
                 }
+//                Column {
+//                    RowIngredient(meals?.strIngredient1,meals?.strMeasure1,1)
+//                    RowIngredient(meals?.strIngredient2,meals?.strMeasure2,2)
+//                    RowIngredient(meals?.strIngredient3,meals?.strMeasure3,3)
+//                    RowIngredient(meals?.strIngredient4,meals?.strMeasure4,4)
+//                    RowIngredient(meals?.strIngredient5,meals?.strMeasure5,5)
+//                    RowIngredient(meals?.strIngredient6,meals?.strMeasure6,6)
+//                    RowIngredient(meals?.strIngredient7,meals?.strMeasure7,7)
+//                    RowIngredient(meals?.strIngredient8,meals?.strMeasure8,8)
+//                    RowIngredient(meals?.strIngredient9,meals?.strMeasure9,9)
+//                    RowIngredient(meals?.strIngredient10,meals?.strMeasure10,10)
+//                    RowIngredient(meals?.strIngredient11,meals?.strMeasure11,11)
+//                    RowIngredient(meals?.strIngredient12,meals?.strMeasure12,12)
+//                    RowIngredient(meals?.strIngredient13,meals?.strMeasure13,13)
+//                    RowIngredient(meals?.strIngredient14,meals?.strMeasure14,14)
+//                    RowIngredient(meals?.strIngredient15,meals?.strMeasure15,15)
+//                }
                 HorizontalDivider(
                     modifier = Modifier.padding(20.dp,10.dp),
                     thickness = 4.dp,
@@ -204,6 +272,23 @@ fun RecipeScreen(
             }
         }
     }
+}
+
+@Composable
+fun GlideImage(imagePath: String, modifier: Modifier = Modifier) {
+    AndroidView(
+        factory = { context ->
+            ImageView(context).apply {
+                scaleType = ImageView.ScaleType.CENTER_CROP
+            }
+        },
+        update = { imageView ->
+            Glide.with(imageView.context)
+                .load(File(imagePath))
+                .into(imageView)
+        },
+        modifier = modifier
+    )
 }
 
 @Composable
