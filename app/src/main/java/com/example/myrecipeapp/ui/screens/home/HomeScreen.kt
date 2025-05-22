@@ -97,22 +97,22 @@ fun HomeScreen(
     val recipesByCategoryIngredients by homeViewModel.searchRecipesByCategoryIngredients.observeAsState()
     val categoriesRecipes by homeViewModel.categories.observeAsState()
     val selectedCategory by homeViewModel.selectedCategory.observeAsState()
-    LaunchedEffect(Unit) {
-        //homeViewModel.fetchRandomRecipe()
-        if (recipesRandom10.isNullOrEmpty()) {
-            homeViewModel.fetchRandomRecipe()
-        }
-        homeViewModel.fetchCategoriesOnce()
-        //homeViewModel.search()
-    }
+//    LaunchedEffect(Unit) {
+//        //homeViewModel.fetchRandomRecipe()
+//        if (recipesRandom10.isNullOrEmpty()) {
+//            homeViewModel.fetchRandomRecipe()
+//        }
+//        homeViewModel.fetchCategoriesOnce()
+//        //homeViewModel.search()
+//    }
 
     val recipesToDisplay by homeViewModel.recipesResult.observeAsState()
 
     //val recipesToDisplay = recipesByCategoryIngredients ?: recipesByIngredients ?: recipesRandom10
-    Log.d("AAAA CARD", recipesToDisplay.toString())
-    Log.d("AAAA Ingredients", selectedIngredients.toString())
-    Log.d("AAAA Categories", categoriesRecipes.toString())
-    Log.d("AAAA SearchCateINgre", recipesByCategoryIngredients.toString())
+    //Log.d("AAAA CARD", recipesToDisplay.toString())
+    //Log.d("AAAA Ingredients", selectedIngredients.toString())
+    //Log.d("AAAA Categories", categoriesRecipes.toString())
+    //Log.d("AAAA SearchCateINgre", recipesByCategoryIngredients.toString())
 
 
     LazyColumn(

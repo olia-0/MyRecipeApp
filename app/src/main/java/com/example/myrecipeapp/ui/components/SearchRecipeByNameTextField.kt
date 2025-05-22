@@ -37,7 +37,7 @@ import com.example.myrecipeapp.ui.theme.Slate900
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchRecipeByNameTextField(
-    //onAddIngredient: (String) -> Unit
+    searchNameRecipe: (String) -> Unit
 ) {
     var inputName by rememberSaveable { mutableStateOf("") }
 
@@ -54,7 +54,13 @@ fun SearchRecipeByNameTextField(
 
             TextField(
                 value = inputName,
-                onValueChange = { inputName = it },
+                onValueChange = {
+                    inputName = it
+                    if (inputName.isNotBlank()) {
+                        //onAddIngredient(inputTextIngredients.trim())
+                        searchNameRecipe(inputName)
+                        //inputName = "" // очистити поле після додавання
+                    }},
                 placeholder = { Text("Введіть текст...", color = Gray400,fontSize = 14.sp,lineHeight = 14.sp ) },
                 colors = TextFieldDefaults.textFieldColors(
                     containerColor = Color.Transparent,
@@ -79,6 +85,7 @@ fun SearchRecipeByNameTextField(
                 .clickable {
                     if (inputName.isNotBlank()) {
                         //onAddIngredient(inputTextIngredients.trim())
+                        searchNameRecipe(inputName)
                         inputName = "" // очистити поле після додавання
                     }
                 },

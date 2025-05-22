@@ -54,4 +54,7 @@ interface ViewedRecipeDao {
 
     @Query("SELECT * FROM viewed_recipes ORDER BY viewedAt ASC LIMIT :limit")
     suspend fun getOldestRecipes(limit: Int): List<ViewedRecipeEntity>
+
+    @Query("SELECT * FROM viewed_recipes WHERE category = :category")
+    fun getByCategory(category: String): Flow<List<ViewedRecipeEntity>>
 }

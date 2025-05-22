@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.myrecipeapp.data.local.SavedRecipeEntity2
 import com.example.myrecipeapp.data.local.entity.SavedRecipeEntity
+
 import com.example.myrecipeapp.data.local.entity.ViewedRecipeEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -32,6 +33,10 @@ interface SavedRecipeDao {
 
     @Query("SELECT SUM(imageSize) FROM saved_recipes")
     suspend fun getTotalSize(): Long
+
+    @Query("SELECT * FROM saved_recipes WHERE category = :category")
+    fun getByCategory(category: String): Flow<List<SavedRecipeEntity>>
+
 
 //    @Query("SELECT * FROM saved_recipes ORDER BY lastModified ASC LIMIT 1")
 //    suspend fun getOldest(): SavedRecipeEntity?

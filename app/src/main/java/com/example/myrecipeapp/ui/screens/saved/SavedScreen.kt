@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
@@ -30,6 +31,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -50,6 +52,8 @@ import com.example.myrecipeapp.R
 import com.example.myrecipeapp.domain.model.Recipe
 import com.example.myrecipeapp.ui.components.SearchRecipeByNameTextField
 import com.example.myrecipeapp.ui.components.SearchRecipeTextField
+import com.example.myrecipeapp.ui.screens.home.CardRecipeHomeScreen
+import com.example.myrecipeapp.ui.screens.home.HomeViewModel
 import com.example.myrecipeapp.ui.screens.home.SearchRecipeByIngredientsTextField
 import com.example.myrecipeapp.ui.theme.Gray300
 import com.example.myrecipeapp.ui.theme.Gray400
@@ -67,6 +71,9 @@ fun SavedScreen(
 ) {
     val recipes by viewModel.savedRecipes.collectAsState()
     val coroutineScope = rememberCoroutineScope()
+
+
+
     LazyColumn (
         modifier = Modifier
             .fillMaxSize(),
@@ -77,7 +84,7 @@ fun SavedScreen(
         //MemoryUsageInfo(viewModel)
         item {
             Spacer(modifier = Modifier.size(20.dp))
-            SearchRecipeByNameTextField()
+            //SearchRecipeByNameTextField()
         }
         item {
             TabSaved(navController,recipes, coroutineScope,viewModel)

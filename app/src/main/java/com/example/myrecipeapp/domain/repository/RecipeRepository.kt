@@ -14,7 +14,8 @@ interface RecipeRepository  {
     suspend fun getRandomRecipes10(): List<RecipeShort>
 
     suspend fun getRecipesByCategory(category: String): List<RecipeShort>
-    suspend fun getRecipesByIngredient(ingredient: String): List<RecipeShort>
+    suspend fun getRecipesByIngredient(ingredient: List<String>): List<RecipeShort>
+    suspend fun getRecipesByCategoryAndIngredients(category: String, ingredient: List<String>): List<RecipeShort>
     ////Room
     //////////Saved
     suspend fun saveRecipe(recipe: SavedRecipeEntity)
@@ -37,4 +38,17 @@ interface RecipeRepository  {
     suspend fun saveViewedRecipe2(context: Context,recipe: Recipe, imageUrl: String)
     ///
     suspend fun getSavedRecipesSizeInfo(): Pair<Long, Long>
+
+    ///
+    suspend fun getSavedRecipesByCategory(category: String): List<RecipeShort>
+    suspend fun getSavedRecipesByIngredients(ingredient: List<String>): List<RecipeShort>
+    suspend fun getSavedRecipesByCategoryAndIngredients(category: String, ingredient: List<String>): List<RecipeShort>
+
+    /////SMART
+    suspend fun getRecipesByCategorySmart(category: String): List<RecipeShort>
+    suspend fun getRecipesByIngredientsSmart(ingredients: List<String>): List<RecipeShort>
+    suspend fun getRecipesByCategoryAndIngredientsSmart(category: String, ingredients: List<String>): List<RecipeShort>
+
+    ////searchName
+    suspend fun searchRecipesByName(name: String): List<RecipeShort>
 }

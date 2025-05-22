@@ -11,3 +11,4 @@ class GetRecipeByIdWithFallbackUseCase @Inject constructor(
         return repository.getRecipeByIdWithFallback(id)
     }
 }
+

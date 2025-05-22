@@ -261,6 +261,20 @@ fun SavedRecipeEntity.toRecipe(): Recipe {
         tagsRecipe = null,
     )
 }
+fun SavedRecipeEntity.toRecipeShort(): RecipeShort {
+    return RecipeShort(
+        id = id,
+        name = title,
+        thumbnail = imagePath
+    )
+}
+fun ViewedRecipeEntity.toRecipeShort(): RecipeShort {
+    return RecipeShort(
+        id = id,
+        name = title,
+        thumbnail = imagePath
+    )
+}
 /////////////VIEWED
 fun Recipe.toViewedEntity(): ViewedRecipeEntity {
     return ViewedRecipeEntity(

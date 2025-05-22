@@ -13,9 +13,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -50,7 +52,9 @@ fun SearchScreen(
     navController: NavHostController = rememberNavController(),
     viewModel: SearchViewModel = hiltViewModel()
 ) {
-    val recipes by viewModel.viewedRecipes.collectAsState()
+    val viewedRecipes by viewModel.viewedRecipes.collectAsState()
+    val query by viewModel.searchQuery.collectAsState()
+    val recipes by viewModel.recipes.collectAsState()
     //Text("SearchScreen")
     LazyColumn(
         modifier = Modifier
@@ -63,39 +67,49 @@ fun SearchScreen(
             Spacer(modifier = Modifier.size(20.dp))
             //SearchTextField(modifier = Modifier)
             //SearchRecipeTextField()
-            SearchRecipeByNameTextField()
-        }
-        item {
-            Row(
-                modifier = Modifier
-                    .padding(top = 20.dp, bottom = 20.dp)
-                    .fillParentMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "Search history",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Slate900,
-                    modifier = Modifier.padding(8.dp)
-                )
-                Text(
-                    text = "See All",
-                    fontSize = 18.sp,
-                    //fontWeight = FontWeight.Bold,
-                    color = MyPrimeryOrang,
-                    modifier = Modifier.padding(8.dp)
-                )
-            }
-        }
-        item {
-            Column {
-                repeat(3){
-                    HistoryCardRecipe()
+            SearchRecipeByNameTextField(
+                searchNameRecipe = {
+                    nameRecipe -> viewModel.onSearchQueryChanged(nameRecipe)
                 }
-            }
+            )
         }
+        items(recipes) { recipe ->
+            recipe.name?.let {
+                Text(text = it)
+            }
+            Divider()
+        }
+//        item {
+//            Row(
+//                modifier = Modifier
+//                    .padding(top = 20.dp, bottom = 20.dp)
+//                    .fillParentMaxWidth(),
+//                verticalAlignment = Alignment.CenterVertically,
+//                horizontalArrangement = Arrangement.SpaceBetween
+//            ) {
+//                Text(
+//                    text = "Search history",
+//                    fontSize = 18.sp,
+//                    fontWeight = FontWeight.Bold,
+//                    color = Slate900,
+//                    modifier = Modifier.padding(8.dp)
+//                )
+//                Text(
+//                    text = "See All",
+//                    fontSize = 18.sp,
+//                    //fontWeight = FontWeight.Bold,
+//                    color = MyPrimeryOrang,
+//                    modifier = Modifier.padding(8.dp)
+//                )
+//            }
+//        }
+//        item {
+//            Column {
+//                repeat(3){
+//                    HistoryCardRecipe()
+//                }
+//            }
+//        }
         item {
             Row(
                 modifier = Modifier
@@ -130,8 +144,8 @@ fun SearchScreen(
                 horizontalArrangement = Arrangement.SpaceAround
 
             ) {
-                items(recipes.size){index ->
-                    CardRecipeHomeScreen(navController,recipes[index].toRecipeShort())
+                items(viewedRecipes.size){index ->
+                    CardRecipeHomeScreen(navController,viewedRecipes[index].toRecipeShort())
                     //Text("1")
                 }
             }

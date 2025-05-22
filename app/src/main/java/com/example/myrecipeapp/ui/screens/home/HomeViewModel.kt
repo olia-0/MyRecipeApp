@@ -50,21 +50,33 @@ class HomeViewModel @Inject constructor(
     val recipesResult: LiveData<List<RecipeShort>> = _recipesResult
 
     private var categoriesLoaded = false
+    init {
+        Log.d("Я тут 1","")
+        //fetchCategoriesOnce()
+        fetchRandomRecipe()
+    }
 
     fun fetchCategoriesOnce() {
+        Log.d("Я тут 2","")
         if (!categoriesLoaded) {
+            Log.d("Я тут 2_1","")
             categoriesLoaded = true
             viewModelScope.launch {
+                Log.d("Я тут 2_2","")
                 _categories.value = getCategoriesUseCase()
+                Log.d("Я тут 2_3","")
             }
+            Log.d("Я тут 2_4","")
 
         }
+        Log.d("Я тут 2_5","")
     }
 
 
     fun fetchRandomRecipe() {
         viewModelScope.launch {
             //_randomRecipes.value = getRandomRecipesUseCase()
+            Log.d("Я тут 2_6", "")
             val random = getRandomRecipesUseCase()
             _randomRecipes.value = random
             _recipesResult.value = random
@@ -75,6 +87,7 @@ class HomeViewModel @Inject constructor(
 
 
     fun addCategory(categories: Categories) {
+        Log.d("Я тут 3","")
         //_selectedCategory.value = categories
         //val current = _selectedCategory.value
         if (categories == selectedCategory.value) {
@@ -87,6 +100,7 @@ class HomeViewModel @Inject constructor(
 
 
 fun addIngredient(ingredient: String) {
+    Log.d("Я тут 4","")
     val current = _ingredients.value.orEmpty()
     _ingredients.value = if (ingredient in current) {
         current - ingredient
@@ -97,12 +111,14 @@ fun addIngredient(ingredient: String) {
 }
 
     fun removeIngredient(ingredient: String) {
+        Log.d("Я тут 5","")
         val updated = _ingredients.value.orEmpty().filterNot { it == ingredient }
         _ingredients.value = updated
         search()
     }
 
     fun onIngredientTextInput(input: String) {
+        Log.d("Я тут 6","")
         val parsedIngredients = input
             .split(",", ";")
             .map { it.trim() }
@@ -113,6 +129,7 @@ fun addIngredient(ingredient: String) {
     }
 
     private fun search() {
+        Log.d("Я тут 7","")
         val currentIngredients = _ingredients.value.orEmpty()
         val currentCategory = _selectedCategory.value
         Log.d("currentIngredients",currentIngredients.toString())
@@ -133,28 +150,28 @@ fun addIngredient(ingredient: String) {
         }
     }
 
-    fun searchByIngredients(ingredients: List<String>) {
-        viewModelScope.launch {
-            _searchRecipesByIngredients.value = searchRecipesByIngredientsUseCase(ingredients)
-        }
-    }
-    fun searchByCategory(input: String) {
-        viewModelScope.launch {
-            _searchRecipesByCategory.value = searchRecipesByCategoryUseCase(input)
-        }
-    }
-    fun searchByIngredientsAndCategory(ingredients: List<String>) {
-        viewModelScope.launch {
-            _searchRecipesByCategoryIngredients.value = selectedCategory.value?.let {
-                searchRecipesByCategoryAndIngredientsUseCase(
-                    it.strCategory,ingredients)
-            }
-        }
-    }
-    fun searchByIngredients(input: String) {
-        val ingredients = input.split(",", ";").map { it.trim() }.filter { it.isNotEmpty() }
-        viewModelScope.launch {
-            _searchRecipesByIngredients.value = searchRecipesByIngredientsUseCase(ingredients)
-        }
-    }
+//    fun searchByIngredients(ingredients: List<String>) {
+//        viewModelScope.launch {
+//            _searchRecipesByIngredients.value = searchRecipesByIngredientsUseCase(ingredients)
+//        }
+//    }
+//    fun searchByCategory(input: String) {
+//        viewModelScope.launch {
+//            _searchRecipesByCategory.value = searchRecipesByCategoryUseCase(input)
+//        }
+//    }
+//    fun searchByIngredientsAndCategory(ingredients: List<String>) {
+//        viewModelScope.launch {
+//            _searchRecipesByCategoryIngredients.value = selectedCategory.value?.let {
+//                searchRecipesByCategoryAndIngredientsUseCase(
+//                    it.strCategory,ingredients)
+//            }
+//        }
+//    }
+//    fun searchByIngredients(input: String) {
+//        val ingredients = input.split(",", ";").map { it.trim() }.filter { it.isNotEmpty() }
+//        viewModelScope.launch {
+//            _searchRecipesByIngredients.value = searchRecipesByIngredientsUseCase(ingredients)
+//        }
+//    }
 }
