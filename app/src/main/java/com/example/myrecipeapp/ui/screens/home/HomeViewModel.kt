@@ -1,20 +1,32 @@
 package com.example.myrecipeapp.ui.screens.home
 
+import android.content.Context
 import android.util.Log
+import androidx.compose.runtime.livedata.R
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.myrecipeapp.data.mapper.toSavedRecipeEntity
 import com.example.myrecipeapp.domain.model.Categories
+import com.example.myrecipeapp.domain.model.Category
 import com.example.myrecipeapp.domain.model.Meal
+import com.example.myrecipeapp.domain.model.Recipe
 import com.example.myrecipeapp.domain.model.RecipeShort
+import com.example.myrecipeapp.domain.usecase.DeleteRecipeUseCase
+import com.example.myrecipeapp.domain.usecase.DownloadRecipeImageUseCase
 import com.example.myrecipeapp.domain.usecase.GetCategoriesUseCase
 import com.example.myrecipeapp.domain.usecase.GetRandomRecipesUseCase
+import com.example.myrecipeapp.domain.usecase.GetRecipeByIdWithFallbackUseCase
+import com.example.myrecipeapp.domain.usecase.IsRecipeSavedUseCase
+import com.example.myrecipeapp.domain.usecase.SaveRecipeUseCase
 import com.example.myrecipeapp.domain.usecase.SearchRecipesByCategoryAndIngredientsUseCase
 import com.example.myrecipeapp.domain.usecase.SearchRecipesByCategoryUseCase
 import com.example.myrecipeapp.domain.usecase.SearchRecipesByIngredientsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,7 +35,13 @@ class HomeViewModel @Inject constructor(
     private val searchRecipesByIngredientsUseCase: SearchRecipesByIngredientsUseCase,
     private val getCategoriesUseCase: GetCategoriesUseCase,
     private val searchRecipesByCategoryAndIngredientsUseCase: SearchRecipesByCategoryAndIngredientsUseCase,
-    private val searchRecipesByCategoryUseCase: SearchRecipesByCategoryUseCase
+    private val searchRecipesByCategoryUseCase: SearchRecipesByCategoryUseCase,
+    private val deleteRecipeUseCase: DeleteRecipeUseCase,
+    private val isRecipeSavedUseCase: IsRecipeSavedUseCase,
+    private val saveRecipeUseCase: SaveRecipeUseCase,
+    private val downloadImageUseCase: DownloadRecipeImageUseCase,
+    private val getRecipeByIdWithFallbackUseCase: GetRecipeByIdWithFallbackUseCase,
+    //private val getCategoriesUseCase: GetCategoriesUseCase
 ) : ViewModel() {
     private val _randomRecipes = MutableLiveData<List<RecipeShort>>()
     val randomRecipes: LiveData<List<RecipeShort>> = _randomRecipes
@@ -40,11 +58,11 @@ class HomeViewModel @Inject constructor(
     private val _ingredients = MutableLiveData<List<String>>(emptyList())
     val ingredients: LiveData<List<String>> = _ingredients
 
-    private val _categories = MutableLiveData<List<Categories>>()
-    val categories: LiveData<List<Categories>> = _categories
+    private val _categories = MutableLiveData<List<Category>>()
+    val categories: LiveData<List<Category>> = _categories
 
-    private val _selectedCategory = MutableLiveData<Categories?>()
-    val selectedCategory: LiveData<Categories?> = _selectedCategory
+    private val _selectedCategory = MutableLiveData<Category?>()
+    val selectedCategory: LiveData<Category?> = _selectedCategory
 
     private val _recipesResult = MutableLiveData<List<RecipeShort>>()
     val recipesResult: LiveData<List<RecipeShort>> = _recipesResult
@@ -52,7 +70,7 @@ class HomeViewModel @Inject constructor(
     private var categoriesLoaded = false
     init {
         Log.d("Я тут 1","")
-        //fetchCategoriesOnce()
+        fetchCategoriesOnce()
         fetchRandomRecipe()
     }
 
@@ -86,7 +104,7 @@ class HomeViewModel @Inject constructor(
     }
 
 
-    fun addCategory(categories: Categories) {
+    fun addCategory(categories: Category) {
         Log.d("Я тут 3","")
         //_selectedCategory.value = categories
         //val current = _selectedCategory.value
@@ -107,6 +125,7 @@ fun addIngredient(ingredient: String) {
     } else {
         current + ingredient
     }
+    _ingredients.value?.let { Log.d("Інгредієнти", it.toString()) }
     search()
 }
 
@@ -138,16 +157,45 @@ fun addIngredient(ingredient: String) {
         viewModelScope.launch {
             _recipesResult.value = when {
                 currentIngredients.isNotEmpty() && currentCategory != null ->
-                    searchRecipesByCategoryAndIngredientsUseCase(currentCategory.strCategory, currentIngredients)
+                    searchRecipesByCategoryAndIngredientsUseCase(currentCategory.name, currentIngredients)
 
                 currentIngredients.isNotEmpty() ->
                     searchRecipesByIngredientsUseCase(currentIngredients)
 
                 currentCategory != null ->
-                    searchRecipesByCategoryUseCase(currentCategory.strCategory)
+                    searchRecipesByCategoryUseCase(currentCategory.name)
                 else -> _randomRecipes.value //getRandomRecipesUseCase()
             }
         }
+    }
+    ////
+    suspend fun isRecipeSaved(id: String): Boolean = withContext(Dispatchers.IO) {
+        isRecipeSavedUseCase(id)
+    }
+
+    fun deleteSavedRecipe(id: String) {
+        viewModelScope.launch {
+            deleteRecipeUseCase(id)
+            //fetchSavedMemoryUsage()
+        }
+    }
+    fun saveRecipeWithImage(context: Context, recipe: Recipe) {
+        viewModelScope.launch {
+            try {
+                val imagePath = recipe.photoRecipe?.let {
+                    downloadImageUseCase(context,
+                        it, recipe.idRecipe)
+                }
+                val savedEntity = imagePath?.let { recipe.toSavedRecipeEntity(it) }
+                savedEntity?.let { saveRecipeUseCase(context,it,recipe.photoRecipe ?: "") }
+            }catch (e: Exception){
+                Log.d("Помилка в збережені фото рецепту", e.toString())
+            }
+
+        }
+    }
+    suspend fun fetchMealById(id: String) : Recipe{
+        return getRecipeByIdWithFallbackUseCase(id)
     }
 
 //    fun searchByIngredients(ingredients: List<String>) {

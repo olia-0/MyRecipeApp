@@ -14,7 +14,7 @@ interface RecipeRepository  {
     suspend fun getRandomRecipes10(): List<RecipeShort>
 
     suspend fun getRecipesByCategory(category: String): List<RecipeShort>
-    suspend fun getRecipesByIngredient(ingredient: List<String>): List<RecipeShort>
+    suspend fun getRecipesByIngredient(ingredient: String): List<RecipeShort>
     suspend fun getRecipesByCategoryAndIngredients(category: String, ingredient: List<String>): List<RecipeShort>
     ////Room
     //////////Saved
@@ -50,5 +50,5 @@ interface RecipeRepository  {
     suspend fun getRecipesByCategoryAndIngredientsSmart(category: String, ingredients: List<String>): List<RecipeShort>
 
     ////searchName
-    suspend fun searchRecipesByName(name: String): List<RecipeShort>
+    suspend fun searchRecipesByName(name: String): List<Recipe>
 }

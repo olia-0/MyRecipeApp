@@ -33,5 +33,5 @@ interface ApiService  {
     suspend fun getCategories(): CategoriesListDto
 
     @GET("search.php")
-    suspend fun searchMealsByName(@Query("s") name: String): RecipeShortListDto
+    suspend fun searchMealsByName(@Query("s") name: String): MealsListDto
 }

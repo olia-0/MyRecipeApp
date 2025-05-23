@@ -43,6 +43,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -50,6 +51,7 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.myrecipeapp.R
 import com.example.myrecipeapp.domain.model.Recipe
+import com.example.myrecipeapp.navigation.AppRoute
 import com.example.myrecipeapp.ui.components.SearchRecipeByNameTextField
 import com.example.myrecipeapp.ui.components.SearchRecipeTextField
 import com.example.myrecipeapp.ui.screens.home.CardRecipeHomeScreen
@@ -124,7 +126,11 @@ fun TabSaved(
 
         // Відображення таблиці залежно від вкладки
         when (selectedTabIndex) {
-            0 -> SavedTable(navController,recipes,coroutineScope,viewModel)
+            0 -> SavedTable(
+                navController,
+                recipes,
+                coroutineScope,
+                viewModel)
             1 -> UserRecipeTable(navController)
         }
     }
@@ -190,7 +196,7 @@ fun SavedTable1(
         modifier = Modifier.fillMaxSize()//.padding(8.dp)
     ) {
         items(recipes.size){index ->
-            CardRecipeCategorySaved(navController,recipes[index],coroutineScope,viewModel)
+            //CardRecipeCategorySaved(navController,recipes[index],coroutineScope,viewModel)
         }
     }
 }
@@ -199,6 +205,7 @@ fun SavedTable(
     navController: NavHostController,
     recipes: List<Recipe>,
     coroutineScope: CoroutineScope,
+    //onClick: () -> Unit
     viewModel: SavedViewModel
 ) {
     Column(
@@ -213,7 +220,15 @@ fun SavedTable(
             ) {
                 rowItems.forEach { recipe ->
                     Box(modifier = Modifier.weight(1f)) {
-                        CardRecipeCategorySaved(navController, recipe, coroutineScope, viewModel)
+                        CardRecipeCategorySaved(
+                            navController,
+                            recipe,
+                            coroutineScope,
+                            onClick = {
+                                viewModel.deleteSavedRecipe(recipe.idRecipe)
+                            },
+                            true
+                        )
                     }
                 }
                 // Якщо непарна кількість — додай порожній блок для вирівнювання
@@ -245,9 +260,11 @@ fun UserRecipeTable(
 @Composable
 fun CardRecipeCategorySaved(
     navController: NavHostController,
-    recipe: Recipe?,
+    recipe: Recipe,
     coroutineScope: CoroutineScope,
-    viewModel: SavedViewModel
+    onClick: () -> Unit,
+    isSave: Boolean
+    //viewModel: SavedViewModel
 ){
     Card(modifier = Modifier
         .width(160.dp)
@@ -267,10 +284,11 @@ fun CardRecipeCategorySaved(
         elevation = CardDefaults.cardElevation(4.dp),
         shape = RoundedCornerShape(8.dp),
         onClick = {
-            navController.navigate(route = "recipe")
+            //navController.navigate(route = "recipe")
+            navController.navigate(AppRoute.recipeWithId(recipe.idRecipe))
         }
     ) {
-        var isSave by rememberSaveable { mutableStateOf(true) }
+        //var isSave by rememberSaveable { mutableStateOf(true) }
         Column(
             modifier = Modifier
                 .fillMaxSize(),
@@ -292,17 +310,18 @@ fun CardRecipeCategorySaved(
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Medium,
                 color = Slate900,
+                overflow = TextOverflow.Ellipsis,
                 //lineHeight = 16.sp,
                 modifier = Modifier.padding(8.dp,0.dp)
             )
             //Spacer(modifier = Modifier.size(5.dp))
             Row(
-                modifier = Modifier.padding(10.dp,5.dp).fillMaxWidth(),
+                modifier = Modifier.padding(10.dp,0.dp).fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = recipe?.areaRecipe ?: "",
+                    text = recipe.areaRecipe ?: "",
                     color = Slate400,
                     fontSize = 10.sp
                 )
@@ -316,11 +335,13 @@ fun CardRecipeCategorySaved(
                         .clickable {
                             //isSave = !isSave
                                 coroutineScope.launch {
-                                    if (isSave) {
-                                        recipe?.idRecipe?.let { viewModel.deleteSavedRecipe(it) }
+                                    //if (isSave) {
+                                        onClick()
+                                        //recipe?.idRecipe?.let { viewModel.deleteSavedRecipe(it) }
                                         //Log.d("Кнопка збереження - збережено", currentMeal.nameRecipe)
-                                        isSave = false
-                                    }
+                                        //isSave = false
+                                    //}
+                                    onClick()
                                 }
                             }
 

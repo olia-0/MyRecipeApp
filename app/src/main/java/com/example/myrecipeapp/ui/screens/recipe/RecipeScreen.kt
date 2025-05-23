@@ -72,8 +72,11 @@ import java.io.File
 @Composable
 fun RecipeScreen(
     navController: NavHostController,
+    recipeId: Int,
     viewModel: RecipeViewModel = hiltViewModel()
 ) {
+
+    //val recipe by viewModel.getRecipe(recipeId).observeAsState()
 
     val meals by viewModel.selectedMeal.observeAsState()
     val instructionMeal by viewModel.mealInstructions.observeAsState()
@@ -84,7 +87,7 @@ fun RecipeScreen(
     var isSaved by rememberSaveable  { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        viewModel.fetchMealById("52772")
+        viewModel.fetchMealById(recipeId.toString())
         meals?.let { viewModel.saveRecipeViewedWithImage(context,it) }
         meals?.let { Log.d("AAAAAA Name Recipe", it.nameRecipe) }
     }

@@ -17,8 +17,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.navArgument
 import com.example.myrecipeapp.ui.screens.categories.CategoriesScreen
 import com.example.myrecipeapp.ui.screens.category.CategoryScreen
 import com.example.myrecipeapp.ui.screens.home.HomeScreen
@@ -47,15 +49,30 @@ fun NavigationGraph(
             SavedScreen(navController)
         }
 
-        composable(AppRoute.CategoryScreen.route) {
-            CategoryScreen(navController)
+//        composable(AppRoute.CategoryScreen.route) {
+//            CategoryScreen(navController)
+//        }
+        composable(
+            route = "category/{categoryName}",
+            arguments = listOf(navArgument("categoryName") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val categoryName = backStackEntry.arguments?.getString("categoryName") ?: ""
+            CategoryScreen(navController = navController, categoryName = categoryName)
         }
         composable(AppRoute.CategoriesScreen.route) {
             CategoriesScreen(navController)
         }
-        composable(AppRoute.RecipeScreen.route) {
-            RecipeScreen(navController)
+        composable(
+            route = "recipe/{recipeId}",
+            arguments = listOf(navArgument("recipeId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val recipeId = backStackEntry.arguments?.getInt("recipeId") ?: 0
+            RecipeScreen(navController = navController, recipeId = recipeId)
         }
+//        composable(AppRoute.RecipeScreen.route) {
+//            RecipeScreen(navController)
+//        }
+
 
 
 }

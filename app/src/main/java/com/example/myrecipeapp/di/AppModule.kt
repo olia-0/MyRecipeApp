@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.example.myrecipeapp.data.datastore.SettingsDataStore
 import com.example.myrecipeapp.data.local.RecipeDatabase
+import com.example.myrecipeapp.data.local.dao.CategoryDao
 import com.example.myrecipeapp.data.local.dao.SavedRecipeDao
 import com.example.myrecipeapp.data.local.dao.ViewedRecipeDao
 import com.example.myrecipeapp.data.remote.api.ApiService
@@ -34,8 +35,11 @@ object AppModule {
         return RecipeRepositoryImpl(apiService, daoSaved, daoViewed,settingsDataStore)
     }
     @Provides
-    fun provideCategoriesRepository(apiService: ApiService): CategoriesRepository {
-        return CategoriesRepositoryImpl(apiService)
+    fun provideCategoriesRepository(
+        apiService: ApiService,
+        daoCategory: CategoryDao
+    ): CategoriesRepository {
+        return CategoriesRepositoryImpl(apiService, daoCategory)
     }
 
 
@@ -59,5 +63,7 @@ object AppModule {
     fun provideSavedRecipeDao(db: RecipeDatabase): SavedRecipeDao = db.savedRecipeDao()
     @Provides
     fun provideViewedRecipeDao(db: RecipeDatabase): ViewedRecipeDao = db.viewedRecipeDao()
+    @Provides
+    fun provideCategoryDao(db: RecipeDatabase): CategoryDao = db.categoryDao()
 
 }

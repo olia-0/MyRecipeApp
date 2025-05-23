@@ -1,7 +1,9 @@
 package com.example.myrecipeapp.ui.screens.search
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,12 +22,19 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -39,12 +48,14 @@ import com.example.myrecipeapp.ui.components.SearchRecipeByNameTextField
 import com.example.myrecipeapp.ui.components.SearchRecipeTextField
 import com.example.myrecipeapp.ui.components.SearchTextField
 import com.example.myrecipeapp.ui.screens.home.CardRecipeHomeScreen
+import com.example.myrecipeapp.ui.screens.saved.CardRecipeCategorySaved
 import com.example.myrecipeapp.ui.theme.Gray300
 import com.example.myrecipeapp.ui.theme.Gray400
 import com.example.myrecipeapp.ui.theme.MyPrimeryOrang
 import com.example.myrecipeapp.ui.theme.Slate400
 import com.example.myrecipeapp.ui.theme.Slate900
 import com.example.myrecipeapp.ui.theme.White
+import kotlinx.coroutines.launch
 
 //@Preview(showSystemUi = true)
 @Composable
@@ -55,6 +66,9 @@ fun SearchScreen(
     val viewedRecipes by viewModel.viewedRecipes.collectAsState()
     val query by viewModel.searchQuery.collectAsState()
     val recipes by viewModel.recipes.collectAsState()
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+    var isSaved by rememberSaveable { mutableStateOf(true) }
     //Text("SearchScreen")
     LazyColumn(
         modifier = Modifier
@@ -73,12 +87,7 @@ fun SearchScreen(
                 }
             )
         }
-        items(recipes) { recipe ->
-            recipe.name?.let {
-                Text(text = it)
-            }
-            Divider()
-        }
+
 //        item {
 //            Row(
 //                modifier = Modifier
@@ -145,8 +154,91 @@ fun SearchScreen(
 
             ) {
                 items(viewedRecipes.size){index ->
-                    CardRecipeHomeScreen(navController,viewedRecipes[index].toRecipeShort())
+                    var isSaved by rememberSaveable { mutableStateOf(false) }
+                    LaunchedEffect(Unit) {
+                        isSaved = viewModel.isRecipeSaved(viewedRecipes[index].idRecipe)
+                    }
+                    CardRecipeHomeScreen(
+                        navController,
+                        viewedRecipes[index].toRecipeShort(),
+                        //viewModel
+                        onClick = {
+                            coroutineScope.launch {
+                                if (viewModel.isRecipeSaved(viewedRecipes[index].idRecipe)) {
+                                    viewModel.deleteSavedRecipe(viewedRecipes[index].idRecipe)
+                                    isSaved = false
+                                } else {
+                                    val recipe = viewModel.fetchMealById(viewedRecipes[index].idRecipe)
+                                    viewModel.saveRecipeWithImage(context, recipe)
+                                    isSaved = true
+                                }
+                            }
+                        },isSaved
+
+//                        onClick = {
+//                            coroutineScope.launch {
+//                                if (viewModel.isRecipeSaved(viewedRecipes[index].idRecipe)) {
+//                                    viewModel.deleteSavedRecipe(viewedRecipes[index].idRecipe)
+//                                    //isSaved = false
+//                                } else {
+//                                    viewModel.saveRecipeWithImage(context, viewedRecipes[index])
+//                                    //isSaved = true
+//                                }
+//                            }
+//                        }
+                    )
                     //Text("1")
+                }
+            }
+        }
+//        items(recipes) { recipe ->
+//            Text(text = recipe.nameRecipe)
+//            Divider()
+//        }
+        item {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),//.padding(top = 20.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                recipes.chunked(2).forEach { rowItems ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(4.dp),
+                        horizontalArrangement = Arrangement.spacedBy(9.dp)
+                    ) {
+                        rowItems.forEach { recipe ->
+                            var isSaved by rememberSaveable { mutableStateOf(false) }
+                            LaunchedEffect(Unit) {
+                                isSaved = viewModel.isRecipeSaved(recipe.idRecipe)
+                            }
+                            Box(modifier = Modifier.weight(1f)) {
+                                CardRecipeCategorySaved(
+                                    navController,
+                                    recipe,
+                                    coroutineScope,
+                                    onClick = {
+                                        coroutineScope.launch {
+                                            if (viewModel.isRecipeSaved(recipe.idRecipe)) {
+                                                viewModel.deleteSavedRecipe(recipe.idRecipe)
+                                                isSaved = false
+                                            } else {
+                                                viewModel.saveRecipeWithImage(context, recipe)
+                                                Log.d("Кнопка збереження - не збережено", recipe.nameRecipe)
+                                                isSaved = true
+                                            }
+                                        }
+                                    },isSaved)
+                            }
+                        }
+                        // Якщо непарна кількість — додай порожній блок для вирівнювання
+                        if (rowItems.size < 2) {
+                            Spacer(modifier = Modifier.weight(1f))
+                        }
+                    }
                 }
             }
         }

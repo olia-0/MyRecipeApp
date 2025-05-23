@@ -151,6 +151,21 @@ fun Recipe.toRecipeShort(): RecipeShort {
     return RecipeShort(id = idRecipe, name = nameRecipe, thumbnail = photoRecipe ?: "")
 }
 
+fun RecipeShort.toRecipe(): Recipe {
+    return Recipe(
+        idRecipe = id,
+        nameRecipe = name,
+        photoRecipe = thumbnail,
+        categoryRecipe = "",
+        areaRecipe = "",
+        instructionsRecipe = "",
+        tagsRecipe = "",
+        youtubeRecipe = "",
+        ingredients = "",
+        measures = ""
+    )
+}
+
 fun MealDto.toRecipe3(): Meal {
     return Meal(
         idRecipe = idMeal,

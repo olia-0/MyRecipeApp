@@ -1,9 +1,26 @@
 package com.example.myrecipeapp.data.mapper
 
+import com.example.myrecipeapp.data.local.entity.CategoryEntity
 import com.example.myrecipeapp.data.remote.dto.CategoriesDTO
 import com.example.myrecipeapp.domain.model.Categories
+import com.example.myrecipeapp.domain.model.Category
 import com.example.myrecipeapp.domain.model.RecipeShort
 
+
+fun CategoryEntity.toCategory(): Category{
+    return Category(
+        id = id,
+        name = name,
+        imagePath = imagePath
+    )
+}
+fun Category.toCategoryEntity(): CategoryEntity{
+    return CategoryEntity(
+        id = id,
+        name = name,
+        imagePath = imagePath
+    )
+}
 
 fun CategoriesDTO.toCategories(): Categories {
     return Categories(strCategory = strCategory)

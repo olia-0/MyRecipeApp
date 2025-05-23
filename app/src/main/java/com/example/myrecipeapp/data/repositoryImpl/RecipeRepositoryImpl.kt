@@ -1,6 +1,7 @@
 package com.example.myrecipeapp.data.repositoryImpl
 
 import android.content.Context
+import android.util.Log
 import androidx.datastore.core.IOException
 import com.example.myrecipeapp.data.datastore.SettingsDataStore
 import com.example.myrecipeapp.data.local.ImageStorage
@@ -57,8 +58,9 @@ class RecipeRepositoryImpl @Inject constructor(
         return apiService.filterByCategory(category).meals.map { it.toMealShort() } ?: emptyList()
     }
 
-    override suspend fun getRecipesByIngredient(ingredient: List<String>): List<RecipeShort> {
-        return apiService.filterByIngredient(ingredient.first()).meals.map { it.toMealShort() } ?: emptyList()
+    override suspend fun getRecipesByIngredient(ingredient: String): List<RecipeShort> {
+
+        return apiService.filterByIngredient(ingredient).meals.map { it.toMealShort() } ?: emptyList()
     }
     override suspend fun getRecipesByCategoryAndIngredients(category: String, ingredients: List<String>): List<RecipeShort> {
         //val ingredients = ingredients.split(",").map { it.trim().lowercase() }
@@ -379,7 +381,24 @@ override suspend fun getSavedRecipesByIngredients(ingredients: List<String>): Li
     }
     override suspend fun getRecipesByIngredientsSmart(ingredients: List<String>): List<RecipeShort> {
         return try {
-            getRecipesByIngredient(ingredients)
+            var result = getRecipesByIngredient(ingredients.first())
+
+            // Знаходимо спільні ID
+            for (ingredient in ingredients.drop(1)) {
+                Log.d("ingredient", ingredient)
+
+                val meals = getRecipesByIngredient(ingredient)
+                Log.d("meals", meals.toString())
+
+                val ids = meals.map { it.id }.toSet()
+                Log.d("ids", ids.toString())
+
+                result = result.filter { it.id in ids }
+                Log.d("result", result.toString())
+            }
+
+            result
+            //getRecipesByIngredient(ingredients)
         } catch (e: IOException) {//catch (e: Exception) {
             getSavedRecipesByIngredients(ingredients)
         }
@@ -393,9 +412,9 @@ override suspend fun getSavedRecipesByIngredients(ingredients: List<String>): Li
     }
 
     ///searchName
-    override suspend fun searchRecipesByName(name: String): List<RecipeShort> {
+    override suspend fun searchRecipesByName(name: String): List<Recipe> {
         val response = apiService.searchMealsByName(name)
-        return response.meals.map { it.toMealShort() } ?: emptyList()
+        return response.meals.map { it.toRecipe() } ?: emptyList()
     }
 
 

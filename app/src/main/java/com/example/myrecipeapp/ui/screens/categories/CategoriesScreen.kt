@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -29,10 +30,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
 import com.example.myrecipeapp.R
-import com.example.myrecipeapp.data.local.Category
+
 import com.example.myrecipeapp.data.local.categoryList
 import com.example.myrecipeapp.domain.model.Categories
+import com.example.myrecipeapp.domain.model.Category
+import com.example.myrecipeapp.navigation.AppRoute
 import com.example.myrecipeapp.ui.components.BackButton
 import com.example.myrecipeapp.ui.components.SearchButton
 import com.example.myrecipeapp.ui.screens.home.HomeViewModel
@@ -42,14 +46,15 @@ import com.example.myrecipeapp.ui.theme.White
 @Composable
 fun CategoriesScreen(
     navController: NavHostController,
-    homeViewModel: HomeViewModel = hiltViewModel()
+    homeViewModel: HomeViewModel = hiltViewModel(),
+    categoriesViewModel: CategoriesViewModel = hiltViewModel()
 ){
     val categoriesRecipes by homeViewModel.categories.observeAsState()
     //val recipesByCategory by homeViewModel.searchRecipesByCategory.observeAsState()
     val selectedCategory by homeViewModel.selectedCategory.observeAsState()
-    LaunchedEffect(Unit) {
-        homeViewModel.fetchCategoriesOnce()
-    }
+//    LaunchedEffect(Unit) {
+//        homeViewModel.fetchCategoriesOnce()
+//    }
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -97,27 +102,39 @@ fun CategoriesScreen(
 @Composable
 fun RecipeCategoryCardComponent(
     navController: NavHostController,
-    category: Categories,
+    category: Category,
 
-){
+    ){
 
     Card(
         modifier = Modifier
             .padding(10.dp)
             .width(80.dp)
             .height(130.dp),
-        onClick = { navController.navigate("category")}
+        onClick = {
+            //navController.navigate("category")
+            navController.navigate(AppRoute.categoryWithName(category.name))
+        }
     ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
         ){
-            Image(
-                painter = painterResource(R.drawable.beef),//painterResource(category.strCategory),
-                contentDescription = stringResource(R.string.beef_image),
-                contentScale = ContentScale.Crop,
+//            AsyncImage() Image(
+//                painter = painterResource(category.imagePath),
+//                contentDescription = stringResource(R.string.beef_image),
+//                contentScale = ContentScale.Crop,
+//                modifier = Modifier
+//                    .fillMaxSize()
+//            )
+            AsyncImage(
+                model = category.imagePath,
+                contentDescription = "Зображення з Інтернету",
                 modifier = Modifier
-                    .fillMaxSize()
+                    .fillMaxWidth(),
+                    //.height(160.dp),
+                //.clip(CircleShape), // Обрізає у круглу форму
+                contentScale = ContentScale.Crop
             )
             Column (
                 modifier = Modifier
@@ -127,7 +144,7 @@ fun RecipeCategoryCardComponent(
                 verticalArrangement = Arrangement.Bottom
             ){
                 Text(
-                    category.strCategory,
+                    category.name,
                     fontSize = 18.sp,
                     color = White
                 )

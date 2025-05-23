@@ -28,11 +28,27 @@ class SearchRecipesByIngredientsUseCase @Inject constructor(
     private val repository: RecipeRepository,
 ) {
     suspend operator fun invoke(ingredients: List<String>): List<RecipeShort> {
-        return try {
-            repository.getRecipesByIngredient(ingredients)
-        } catch (e: Exception) {
-            Log.d("SearchRecipesByCategory","Помилка з АПІ")
-            repository.getSavedRecipesByIngredients(ingredients)
-        }
+//        return try {
+//            repository.getRecipesByIngredient(ingredients)
+//        } catch (e: Exception) {
+//            Log.d("SearchRecipesByCategory","Помилка з АПІ")
+//            repository.getSavedRecipesByIngredients(ingredients)
+//        }
+        return repository.getRecipesByIngredientsSmart(ingredients)
     }
+//    suspend operator fun invoke(ingredients: List<String>): List<RecipeShort> {
+//        if (ingredients.isEmpty()) return emptyList()
+//
+//        // Отримуємо рецепти по першому інгредієнту
+//        var result = repository.getRecipesByIngredient(ingredients)
+//
+//        // Знаходимо спільні ID
+//        for (ingredient in ingredients.drop(1)) {
+//            val meals = repository.getRecipesByIngredient(ingredients)
+//            val ids = meals.map { it.id }.toSet()
+//            result = result.filter { it.id in ids }
+//        }
+//
+//        return result
+//    }
 }

@@ -49,6 +49,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -58,6 +59,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -67,10 +69,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.myrecipeapp.R
 import com.example.myrecipeapp.domain.model.RecipeShort
+import com.example.myrecipeapp.navigation.AppRoute
 import com.example.myrecipeapp.ui.components.SearchTextField
 import com.example.myrecipeapp.ui.theme.Gray100
 import com.example.myrecipeapp.ui.theme.Gray200
@@ -82,6 +87,7 @@ import com.example.myrecipeapp.ui.theme.Slate600
 import com.example.myrecipeapp.ui.theme.Slate700
 import com.example.myrecipeapp.ui.theme.Slate900
 import com.example.myrecipeapp.ui.theme.White
+import kotlinx.coroutines.launch
 
 //@RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 //@OptIn(ExperimentalMaterial3Api::class)
@@ -105,6 +111,8 @@ fun HomeScreen(
 //        homeViewModel.fetchCategoriesOnce()
 //        //homeViewModel.search()
 //    }
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     val recipesToDisplay by homeViewModel.recipesResult.observeAsState()
 
@@ -208,7 +216,7 @@ fun HomeScreen(
                     items(it.size){index ->
                         var isSelected = it[index] == selectedCategory
                         Text(
-                            text = it[index].strCategory,
+                            text = it[index].name,
                             fontSize = 14.sp,
                             color = if(isSelected) Slate900  else Slate400,
                             fontWeight = FontWeight.Medium,
@@ -236,7 +244,26 @@ fun HomeScreen(
                     contentPadding = PaddingValues(horizontal = 16.dp)
                 ) {
                     items(list.size) { index ->
-                        CardRecipeHomeScreen(navController, list[index])
+                        var isSaved by rememberSaveable { mutableStateOf(false) }
+                        LaunchedEffect(Unit) {
+                            isSaved = homeViewModel.isRecipeSaved(list[index].id)
+                        }
+                        CardRecipeHomeScreen(
+                            navController,
+                            list[index],
+                            onClick = {
+                                coroutineScope.launch {
+                                    if (homeViewModel.isRecipeSaved(list[index].id)) {
+                                        homeViewModel.deleteSavedRecipe(list[index].id)
+                                        isSaved = false
+                                    } else {
+                                        val recipe = homeViewModel.fetchMealById(list[index].id)
+                                        homeViewModel.saveRecipeWithImage(context, recipe)
+                                        Log.d("Кнопка збереження - не збережено", list[index].name)
+                                        isSaved = true
+                                    }
+                                }
+                            },isSaved)
                     }
                 }
             }
@@ -555,7 +582,10 @@ fun IngredientCard(
 @Composable
 fun CardRecipeHomeScreen(
     navController: NavHostController,
-    recipe: RecipeShort
+    recipe: RecipeShort,
+    //viewModel: ViewModel
+    onClick: () -> Unit,
+    isSave: Boolean
 ){
     Card(modifier = Modifier
         .width(300.dp)
@@ -574,10 +604,11 @@ fun CardRecipeHomeScreen(
         elevation = CardDefaults.cardElevation(4.dp),
         shape = RoundedCornerShape(12.dp),
         onClick = {
-            navController.navigate(route = "recipe")
+            //navController.navigate(route = "recipe")
+            navController.navigate(AppRoute.recipeWithId(recipe.id))
         }
     ) {
-        var isSave by rememberSaveable { mutableStateOf(false) }
+        //var isSave by rememberSaveable { mutableStateOf(false) }
         Column(
             modifier = Modifier
                 .fillMaxSize(),
@@ -595,7 +626,7 @@ fun CardRecipeHomeScreen(
             )
             //Spacer(modifier = Modifier.size(10.dp))
             Text(
-                text = recipe.name,
+                text = recipe.name + isSave.toString(),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = Slate900,
@@ -620,7 +651,11 @@ fun CardRecipeHomeScreen(
                     contentDescription = stringResource(R.string.icon_save),
                     modifier = Modifier
                         .size(20.dp)
-                        .clickable { isSave = !isSave }
+                        .clickable {
+                            //isSave = !isSave
+                            Log.d("isSaveIcon",isSave.toString())
+                            onClick()
+                        }
 
                 )
             }
