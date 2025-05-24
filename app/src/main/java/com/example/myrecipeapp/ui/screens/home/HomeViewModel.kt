@@ -2,11 +2,15 @@ package com.example.myrecipeapp.ui.screens.home
 
 import android.content.Context
 import android.util.Log
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.R
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.myrecipeapp.data.datastore.UserPreferences
 import com.example.myrecipeapp.data.mapper.toSavedRecipeEntity
 import com.example.myrecipeapp.domain.model.Categories
 import com.example.myrecipeapp.domain.model.Category
@@ -23,6 +27,7 @@ import com.example.myrecipeapp.domain.usecase.SaveRecipeUseCase
 import com.example.myrecipeapp.domain.usecase.SearchRecipesByCategoryAndIngredientsUseCase
 import com.example.myrecipeapp.domain.usecase.SearchRecipesByCategoryUseCase
 import com.example.myrecipeapp.domain.usecase.SearchRecipesByIngredientsUseCase
+import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -43,6 +48,14 @@ class HomeViewModel @Inject constructor(
     private val getRecipeByIdWithFallbackUseCase: GetRecipeByIdWithFallbackUseCase,
     //private val getCategoriesUseCase: GetCategoriesUseCase
 ) : ViewModel() {
+    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+
+    fun getCurrentUserUid(): String? {
+        return auth.currentUser?.uid
+    }
+    var currentUser by mutableStateOf(auth.currentUser)
+        private set
+
     private val _randomRecipes = MutableLiveData<List<RecipeShort>>()
     val randomRecipes: LiveData<List<RecipeShort>> = _randomRecipes
 
@@ -72,6 +85,12 @@ class HomeViewModel @Inject constructor(
         Log.d("Я тут 1","")
         fetchCategoriesOnce()
         fetchRandomRecipe()
+        currentUser = auth.currentUser
+
+    }
+    fun signOut() {
+        auth.signOut()
+        currentUser = null
     }
 
     fun fetchCategoriesOnce() {
@@ -186,7 +205,7 @@ fun addIngredient(ingredient: String) {
                     downloadImageUseCase(context,
                         it, recipe.idRecipe)
                 }
-                val savedEntity = imagePath?.let { recipe.toSavedRecipeEntity(it) }
+                val savedEntity = imagePath?.let { recipe }
                 savedEntity?.let { saveRecipeUseCase(context,it,recipe.photoRecipe ?: "") }
             }catch (e: Exception){
                 Log.d("Помилка в збережені фото рецепту", e.toString())

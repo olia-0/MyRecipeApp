@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "saved_recipes")
 data class SavedRecipeEntity(
     @PrimaryKey val id: String,
+    val userId: String,
     val title: String,
     val category: String,
     val ingredients: String,

@@ -16,7 +16,7 @@ import com.example.myrecipeapp.data.local.entity.ViewedRecipeEntity
     [   SavedRecipeEntity::class,
         ViewedRecipeEntity::class,
         CategoryEntity::class,
-    ], version = 6)
+    ], version = 7)
 abstract class RecipeDatabase : RoomDatabase() {
     abstract fun savedRecipeDao(): SavedRecipeDao
     abstract fun viewedRecipeDao(): ViewedRecipeDao

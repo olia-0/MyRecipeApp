@@ -19,23 +19,37 @@ interface SavedRecipeDao {
     @Delete
     suspend fun delete(recipe: SavedRecipeEntity)
 
-    @Query("SELECT * FROM saved_recipes")
-    fun getAll(): Flow<List<SavedRecipeEntity>>
+    //@Query("SELECT * FROM saved_recipes")
+    //fun getAll(): Flow<List<SavedRecipeEntity>>
+    @Query("SELECT * FROM saved_recipes WHERE userId = :userId")
+    fun getAll(userId: String): Flow<List<SavedRecipeEntity>>
 
-    @Query("SELECT * FROM saved_recipes WHERE id = :id")
-    suspend fun getById(id: String): SavedRecipeEntity?
+    //@Query("SELECT * FROM saved_recipes WHERE id = :id")
+    //suspend fun getById(id: String): SavedRecipeEntity?
+    @Query("SELECT * FROM saved_recipes WHERE id = :id AND userId = :userId")
+    suspend fun getById(id: String, userId: String): SavedRecipeEntity?
 
-    @Query("DELETE FROM saved_recipes WHERE id = :id")
-    suspend fun deleteById(id: String)
 
-    @Query("SELECT COUNT(*) FROM saved_recipes")
-    suspend fun getCount(): Int
+    //@Query("DELETE FROM saved_recipes WHERE id = :id")
+    //suspend fun deleteById(id: String)
+    @Query("DELETE FROM saved_recipes WHERE id = :id AND userId = :userId")
+    suspend fun deleteById(id: String, userId: String)
 
-    @Query("SELECT SUM(imageSize) FROM saved_recipes")
-    suspend fun getTotalSize(): Long
+//    @Query("SELECT COUNT(*) FROM saved_recipes")
+//    suspend fun getCount(): Int
+    @Query("SELECT COUNT(*) FROM saved_recipes WHERE userId = :userId")
+    suspend fun getCount(userId: String): Int
 
-    @Query("SELECT * FROM saved_recipes WHERE category = :category")
-    fun getByCategory(category: String): Flow<List<SavedRecipeEntity>>
+
+    //@Query("SELECT SUM(imageSize) FROM saved_recipes")
+    //suspend fun getTotalSize(): Long
+    @Query("SELECT SUM(imageSize) FROM saved_recipes WHERE userId = :userId")
+    suspend fun getTotalSize(userId: String): Long
+
+    //@Query("SELECT * FROM saved_recipes WHERE category = :category")
+    //fun getByCategory(category: String): Flow<List<SavedRecipeEntity>>
+    @Query("SELECT * FROM saved_recipes WHERE category = :category AND userId = :userId")
+    fun getByCategory(category: String, userId: String): Flow<List<SavedRecipeEntity>>
 
 
 //    @Query("SELECT * FROM saved_recipes ORDER BY lastModified ASC LIMIT 1")

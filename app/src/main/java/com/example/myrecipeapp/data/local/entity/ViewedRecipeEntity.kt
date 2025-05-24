@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "viewed_recipes")
 data class ViewedRecipeEntity(
     @PrimaryKey val id: String,
+    //val userId: String,
     val title: String,
     val category: String,
     val ingredients: String,

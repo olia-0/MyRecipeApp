@@ -9,6 +9,8 @@ plugins {
     //id("dagger.hilt.android.plugin")
     id("com.google.dagger.hilt.android")
     id("kotlin-kapt")
+
+    id("com.google.gms.google-services")
 }
 hilt {
     enableAggregatingTask = false
@@ -67,6 +69,8 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.firebase.auth.ktx)
+    implementation(libs.firebase.firestore.ktx)
     //implementation(libs.androidx.datastore.preferences.core.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -134,5 +138,9 @@ dependencies {
     //kapt 'com.github.bumptech.glide:compiler:4.16.0'
     /////DataStore
     implementation(libs.androidx.datastore.preferences)
+
+    ///firebase
+    implementation(platform("com.google.firebase:firebase-bom:33.14.0"))
+    implementation("com.google.firebase:firebase-analytics")
 
 }

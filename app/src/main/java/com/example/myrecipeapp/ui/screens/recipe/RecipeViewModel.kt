@@ -83,7 +83,7 @@ class RecipeViewModel @Inject constructor(
                     downloadImageUseCase(context,
                         it, recipe.idRecipe)
                 }
-                val savedEntity = imagePath?.let { recipe.toSavedRecipeEntity(it) }
+                val savedEntity = imagePath?.let { recipe }
                 savedEntity?.let { saveRecipeUseCase(context,it,recipe.photoRecipe ?: "") }
             }catch (e: Exception){
                 Log.d("Помилка в збережені фото рецепту", e.toString())

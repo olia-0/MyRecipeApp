@@ -249,9 +249,10 @@ fun MealDto.toRecipe(): Recipe {
 }
 //////ROOM
 //////////////SAVED
-fun Recipe.toSavedRecipeEntity(imagePath: String): SavedRecipeEntity {
+fun Recipe.toSavedRecipeEntity(userId: String,imagePath: String): SavedRecipeEntity {
     return SavedRecipeEntity(
         id = idRecipe,
+        userId = userId,
         title = nameRecipe,
         category = categoryRecipe ?: "",
         ingredients = ingredients,

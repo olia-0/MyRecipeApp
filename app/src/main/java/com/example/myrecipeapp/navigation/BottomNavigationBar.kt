@@ -24,6 +24,7 @@ import androidx.navigation.navArgument
 import com.example.myrecipeapp.ui.screens.categories.CategoriesScreen
 import com.example.myrecipeapp.ui.screens.category.CategoryScreen
 import com.example.myrecipeapp.ui.screens.home.HomeScreen
+import com.example.myrecipeapp.ui.screens.login.LoginScreen
 import com.example.myrecipeapp.ui.screens.recipe.RecipeScreen
 import com.example.myrecipeapp.ui.screens.saved.SavedScreen
 import com.example.myrecipeapp.ui.screens.search.SearchScreen
@@ -36,7 +37,7 @@ fun NavigationGraph(
     NavHost(
         navController = navController,
         //startDestination = AppRoute.StartScreen.route)
-        startDestination = AppRoute.SearchScreen.route){
+        startDestination = AppRoute.HomeScreen.route){
         //startDestination = AppRoute.HomeScreen.route) {
         composable(AppRoute.HomeScreen.route) {
             HomeScreen(navController)
@@ -47,6 +48,9 @@ fun NavigationGraph(
         }
         composable(AppRoute.SavedScreen.route) {
             SavedScreen(navController)
+        }
+        composable(AppRoute.LoginScreen.route) {
+            LoginScreen(navController)
         }
 
 //        composable(AppRoute.CategoryScreen.route) {

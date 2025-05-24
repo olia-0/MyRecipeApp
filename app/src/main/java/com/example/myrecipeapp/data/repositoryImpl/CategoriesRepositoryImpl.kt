@@ -2,6 +2,7 @@ package com.example.myrecipeapp.data.repositoryImpl
 
 import android.content.Context
 import android.util.Log
+import com.example.myrecipeapp.data.datastore.UserPreferences
 import com.example.myrecipeapp.data.local.ImageStorage
 import com.example.myrecipeapp.data.local.dao.CategoryDao
 import com.example.myrecipeapp.data.local.entity.CategoryEntity
@@ -22,8 +23,10 @@ import javax.inject.Inject
 
 class CategoriesRepositoryImpl @Inject constructor(
     private val apiService: ApiService,
-    private val dao: CategoryDao
+    private val dao: CategoryDao,
+
 ) : CategoriesRepository {
+
 
     override suspend fun getCategories(): List<Categories> {
         Log.d("API_DEBUG", apiService.getCategories().toString())

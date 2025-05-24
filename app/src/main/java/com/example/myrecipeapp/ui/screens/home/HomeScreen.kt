@@ -103,6 +103,7 @@ fun HomeScreen(
     val recipesByCategoryIngredients by homeViewModel.searchRecipesByCategoryIngredients.observeAsState()
     val categoriesRecipes by homeViewModel.categories.observeAsState()
     val selectedCategory by homeViewModel.selectedCategory.observeAsState()
+    val user = homeViewModel.currentUser
 //    LaunchedEffect(Unit) {
 //        //homeViewModel.fetchRandomRecipe()
 //        if (recipesRandom10.isNullOrEmpty()) {
@@ -156,10 +157,16 @@ fun HomeScreen(
                             lineHeight = 14.sp
                         )
 
-                        Text(text = "Ola",
+                        Text(
+                            text = user?.email ?: "Olla",
                             fontSize = 16.sp,
                             color = Slate900,
-                            lineHeight = 19.sp
+                            lineHeight = 19.sp,
+                            modifier = Modifier
+                                .clickable {
+                                    homeViewModel.signOut()
+                                    navController.navigate(route = "login")
+                                }
                         )
                     }
                 }

@@ -3,6 +3,7 @@ package com.example.myrecipeapp.di
 import android.content.Context
 import androidx.room.Room
 import com.example.myrecipeapp.data.datastore.SettingsDataStore
+import com.example.myrecipeapp.data.datastore.UserPreferences
 import com.example.myrecipeapp.data.local.RecipeDatabase
 import com.example.myrecipeapp.data.local.dao.CategoryDao
 import com.example.myrecipeapp.data.local.dao.SavedRecipeDao
@@ -30,9 +31,10 @@ object AppModule {
         apiService: ApiService,
         daoSaved: SavedRecipeDao,
         daoViewed: ViewedRecipeDao,
-        settingsDataStore: SettingsDataStore
+        settingsDataStore: SettingsDataStore,
+        userPreferences: UserPreferences
     ): RecipeRepository {
-        return RecipeRepositoryImpl(apiService, daoSaved, daoViewed,settingsDataStore)
+        return RecipeRepositoryImpl(apiService, daoSaved, daoViewed,settingsDataStore, userPreferences)
     }
     @Provides
     fun provideCategoriesRepository(
