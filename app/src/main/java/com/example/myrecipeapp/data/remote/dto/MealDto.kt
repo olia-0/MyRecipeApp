@@ -60,5 +60,28 @@ data class MealDto(
 )
 
 data class MealsListDto(
-    @SerializedName("meals") val meals: List<MealDto>
+    @SerializedName("meals") val recipes: List<MealDto>
+)
+
+data class RecipeDto(
+    @SerializedName("idRecipe") val idRecipe: String,
+    @SerializedName("nameRecipe") val nameRecipe: String,
+    @SerializedName("photoRecipe") val photoRecipe: String?,
+    @SerializedName("categoryRecipe") val categoryRecipe: String?,
+    @SerializedName("areaRecipe") val areaRecipe: String?,
+    @SerializedName("instructionsRecipe") val instructionsRecipe: String?,
+    @SerializedName("tagsRecipe") val tagsRecipe: String?,
+    @SerializedName("youtubeRecipe") val youtubeRecipe: String?,
+    @SerializedName("ingredients") val ingredients: String,
+    @SerializedName("measures") val measures: String,
+    @SerializedName("description") val description: String?,
+    @SerializedName("nutritionCalories") val nutritionCalories: Int?,
+    @SerializedName("nutritionProteins") val nutritionProteins: Float?,
+    @SerializedName("nutritionFats") val nutritionFats: Float?,
+    @SerializedName("nutritionCarbs") val nutritionCarbs: Float?,
+    @SerializedName("cookingTime") val cookingTime: String?
+)
+
+data class RecipesListDto(
+    @SerializedName("recipes") val recipes: List<RecipeDto>
 )

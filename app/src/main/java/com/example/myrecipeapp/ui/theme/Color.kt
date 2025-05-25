@@ -11,6 +11,7 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 ///My colors
 val MyPrimeryOrang = Color(0xFFFB9400)
+val OrangeGradient = Color(0xFFFF9800)
 val Pizazz50 = Color(0xFFFFF5E6)
 
 val Gray400 = Color(0xFF9CA3AF)

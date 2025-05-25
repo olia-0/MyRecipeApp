@@ -65,10 +65,10 @@ import com.example.myrecipeapp.ui.screens.login.AuthViewModel
 import com.example.myrecipeapp.ui.screens.login.LoginScreen
 import dagger.hilt.android.AndroidEntryPoint
 
-//import com.example.myrecipeapp.navigation.NavigationGraph
-//@AndroidEntryPoint
+
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
     //private val viewModel: AuthViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,25 +76,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MyRecipeAppTheme(darkTheme = false) {
-//                val user = viewModel.currentUser
-//
-//                if (user != null) {
-//                    AppHomeScreen() // твій головний екран
-//                } else {
-//                    LoginScreen(viewModel) {
-//                        // після входу
-//                    }
-//                }
                 MyApp(userPrefs)
                 //AppHomeScreen()
             }
-//            MyRecipeAppTheme {
-//                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-//
-//
-//                }
-//
-//            }
         }
     }
 }
@@ -128,7 +112,7 @@ fun AppHomeScreen(
             bottomBar = {
                 val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
                 if (currentRoute != AppRoute.LoginScreen.route &&
-                    currentRoute != AppRoute.RegistrationScreen.route &&
+                    //currentRoute != AppRoute.RegistrationScreen.route &&
                     currentRoute != AppRoute.StartScreen.route &&
                     currentRoute != AppRoute.RecipeScreen.route
                 ) {
@@ -136,7 +120,7 @@ fun AppHomeScreen(
                         navController = navController,
                         modifier = Modifier.height(90.dp)
                     )
-               }
+                }
             }
         ) { innerPadding ->
             val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
@@ -169,6 +153,82 @@ fun AppEntry(userPrefs: UserPreferences, onLoggedIn: () -> Unit, onLoginRequired
         }
     }
 }
+
+
+
+//@Composable
+//fun MyApp(
+//    userPrefs: UserPreferences,
+//    //navController: NavHostController = rememberNavController()
+//) {
+//    //val navController = rememberNavController()
+//    var currentScreen by remember { mutableStateOf("login") }
+//
+//    AppEntry(
+//        userPrefs = userPrefs,
+//        onLoggedIn = { currentScreen = "home" },
+//        onLoginRequired = { currentScreen = "login" }
+//    )
+//
+//
+//    when (currentScreen) {
+//        "home" -> AppHomeScreen()
+//        "login" -> LoginScreen() //{ currentScreen = "home" }
+//    }
+//}
+//
+//@Composable
+//fun AppHomeScreen(
+//    navController: NavHostController = rememberNavController()
+//) {
+//    MyRecipeAppTheme(darkTheme = false) {
+//        Scaffold(
+//            modifier = Modifier.fillMaxSize(),
+//            //topBar = ,
+//            bottomBar = {
+//                val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+//                if (currentRoute != AppRoute.LoginScreen.route &&
+//                    //currentRoute != AppRoute.RegistrationScreen.route &&
+//                    currentRoute != AppRoute.StartScreen.route &&
+//                    currentRoute != AppRoute.RecipeScreen.route
+//                ) {
+//                    BottomBar(
+//                        navController = navController,
+//                        modifier = Modifier.height(90.dp)
+//                    )
+//               }
+//            }
+//        ) { innerPadding ->
+//            val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+//            if (currentRoute != null) {
+//                Log.d("currentRoute",currentRoute)
+//            }
+//            Box(
+//                modifier = Modifier.padding(innerPadding)
+//            ) {
+//
+//                NavigationGraph(navController = navController)
+//            }
+//
+//
+//        }
+//
+//    }
+//}
+//
+//
+//@Composable
+//fun AppEntry(userPrefs: UserPreferences, onLoggedIn: () -> Unit, onLoginRequired: () -> Unit) {
+//    val isLoggedIn by userPrefs.isLoggedIn.collectAsState(initial = false)
+//
+//    LaunchedEffect(isLoggedIn) {
+//        if (isLoggedIn) {
+//            onLoggedIn()
+//        } else {
+//            onLoginRequired()
+//        }
+//    }
+//}
 
 
 

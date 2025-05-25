@@ -1,5 +1,6 @@
 package com.example.myrecipeapp.domain.usecase
 
+import android.util.Log
 import com.example.myrecipeapp.data.mapper.toRecipeShort
 import com.example.myrecipeapp.domain.model.Meal
 import com.example.myrecipeapp.domain.model.RecipeShort
@@ -12,8 +13,10 @@ class GetRandomRecipesUseCase @Inject constructor (
 ) {
     suspend operator fun invoke(): List<RecipeShort> {
         return try {
+            Log.d("Юскейс","Репозиторій")
             repository.getRandomRecipes10()
         }catch (e: Exception){
+            Log.d("Юскейс",e.toString())
             repository.getSavedRecipes().first().map { it.toRecipeShort() }
         }
     }

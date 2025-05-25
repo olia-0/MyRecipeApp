@@ -89,7 +89,8 @@ fun SavedScreen(
             //SearchRecipeByNameTextField()
         }
         item {
-            TabSaved(navController,recipes, coroutineScope,viewModel)
+            //TabSaved(navController,recipes, coroutineScope,viewModel)
+            SavedTable(navController,recipes, coroutineScope,viewModel)
         }
 
     }
@@ -209,7 +210,7 @@ fun SavedTable(
     viewModel: SavedViewModel
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth().padding(top = 20.dp)
+        modifier = Modifier.fillMaxWidth().padding(20.dp)
     ) {
         recipes.chunked(2).forEach { rowItems ->
             Row(

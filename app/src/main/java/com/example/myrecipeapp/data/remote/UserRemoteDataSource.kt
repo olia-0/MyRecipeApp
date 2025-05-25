@@ -8,12 +8,14 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 // data/remote/UserRemoteDataSource.kt
 
-class UserRemoteDataSource(
-    private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
+class UserRemoteDataSource @Inject constructor(
+
 ) {
+    private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
 
     fun saveUserProfileToFirestore(user: FirebaseUser, username: String, allergies: List<String>) {
         val profile = UserProfile(

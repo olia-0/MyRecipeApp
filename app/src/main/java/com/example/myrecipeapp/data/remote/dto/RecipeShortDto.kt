@@ -9,5 +9,6 @@ data class RecipeShortDto(
 )
 
 data class RecipeShortListDto(
-    @SerializedName("meals") val meals: List<RecipeShortDto>
+    @SerializedName("recipes") val meals: List<RecipeShortDto>
 )
+

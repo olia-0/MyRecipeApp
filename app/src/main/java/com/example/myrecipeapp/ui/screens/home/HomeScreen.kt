@@ -45,6 +45,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -104,6 +105,8 @@ fun HomeScreen(
     val categoriesRecipes by homeViewModel.categories.observeAsState()
     val selectedCategory by homeViewModel.selectedCategory.observeAsState()
     val user = homeViewModel.currentUser
+    val username by homeViewModel.username.collectAsState()
+    Log.d("username",username)
 //    LaunchedEffect(Unit) {
 //        //homeViewModel.fetchRandomRecipe()
 //        if (recipesRandom10.isNullOrEmpty()) {
@@ -151,14 +154,15 @@ fun HomeScreen(
 
                     ) {
                         Text(
-                            text = "Welcome,👋🏻",
+                            text = "Вітаємо,👋🏻",
                             fontSize = 14.sp,
                             color = Gray400,
                             lineHeight = 14.sp
                         )
 
                         Text(
-                            text = user?.email ?: "Olla",
+                            //text = user?.displayName?: "Olla",
+                            text = username ?: "Olla",
                             fontSize = 16.sp,
                             color = Slate900,
                             lineHeight = 19.sp,
@@ -206,7 +210,7 @@ fun HomeScreen(
                 item {
                     val isSelectedAll = selectedCategory == null
                     Text(
-                        text = "All",
+                        text = "Всі",
                         fontSize = 14.sp,
                         color = if(isSelectedAll) Slate900  else Slate400,
                         fontWeight = FontWeight.Medium,
@@ -359,7 +363,7 @@ fun CategoryButton(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "All Category",
+                text = "Всі категорії",
                 fontSize = 14.sp,
                 //fontWeight = FontWeight.Bold
             )
@@ -396,7 +400,7 @@ fun SearchRecipeByIngredientsTextField(
             TextField(
                 value = inputTextIngredients,
                 onValueChange = { inputTextIngredients = it },
-                placeholder = { Text("Введіть текст...", color = Gray400,fontSize = 14.sp,lineHeight = 14.sp ) },
+                placeholder = { Text("Введіть інгредієнти...", color = Gray400,fontSize = 14.sp,lineHeight = 14.sp ) },
                 colors = TextFieldDefaults.textFieldColors(
                     containerColor = Color.Transparent,
                     focusedIndicatorColor = Color.Transparent,
@@ -461,15 +465,15 @@ fun CardFridge(
     onIngredientClick: (String) -> Unit
 ){
     val ingredientCard = listOf(
-        "Meat" to "🥩",
-        "Chicken" to "🍗",
-        "Fish" to "🐟",
-        "Milk" to "🥛",
-        "Flour" to "😶‍🌫️",
-        "Sugar" to "🍪",
-        "Eggs" to "🥚",
-        "Broccoli" to "🥦",
-        "Potato" to "🥔",
+        "Свинина" to "🥩",
+        "Філе" to "🍗",
+        "Риба" to "🐟",
+        "Молоко" to "🥛",
+        "Мука" to "😶‍🌫️",
+        "Цукор" to "🍪",
+        "Яйце" to "🥚",
+        //"Broccoli" to "🥦",
+        "Картопля" to "🥔",
         //"Salmon",
         //"Beef",
         //"Pork",
@@ -504,11 +508,11 @@ fun CardFridge(
         modifier = Modifier
             //.background(Color.Yellow)
             .fillMaxWidth()
-            .height(200.dp)
-            .padding(20.dp)
+            .height(180.dp)
+            .padding(20.dp,10.dp)
             //.background(Color.Cyan)
     ){
-        Text(text = "What's in your fridge?",
+        Text(text = "Що є в твоєму холодильнику?",
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
             color = Slate900,
@@ -611,6 +615,7 @@ fun CardRecipeHomeScreen(
         elevation = CardDefaults.cardElevation(4.dp),
         shape = RoundedCornerShape(12.dp),
         onClick = {
+            Log.d("Перейшла на рецепт",recipe.toString() +"  "+recipe.id)
             //navController.navigate(route = "recipe")
             navController.navigate(AppRoute.recipeWithId(recipe.id))
         }

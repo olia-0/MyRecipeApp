@@ -3,6 +3,7 @@ package com.example.myrecipeapp.data.mapper
 import com.example.myrecipeapp.data.local.entity.SavedRecipeEntity
 import com.example.myrecipeapp.data.local.entity.ViewedRecipeEntity
 import com.example.myrecipeapp.data.remote.dto.MealDto
+import com.example.myrecipeapp.data.remote.dto.RecipeDto
 import com.example.myrecipeapp.data.remote.dto.RecipeShortDto
 import com.example.myrecipeapp.domain.model.Meal
 import com.example.myrecipeapp.domain.model.Recipe
@@ -144,6 +145,43 @@ object RecipeMapper {
 //        )
 //    }
 }
+fun RecipeDto.toRecipe(): Recipe{
+    return Recipe(
+        idRecipe = idRecipe,
+        nameRecipe = nameRecipe,
+        photoRecipe = photoRecipe,
+        categoryRecipe = categoryRecipe,
+        areaRecipe = areaRecipe,
+        instructionsRecipe = instructionsRecipe,
+        tagsRecipe = tagsRecipe,
+        youtubeRecipe = youtubeRecipe,
+        ingredients = ingredients,
+        measures = measures
+    )
+}
+fun RecipeDto.toRecipeShort(): RecipeShort{
+    return RecipeShort(
+        id = idRecipe,
+        name = nameRecipe,
+        thumbnail = photoRecipe?:""
+    )
+}
+//fun Recipe.toRecipeDto(): RecipeDto{
+//    return RecipeDto(
+//        idRecipe = idRecipe,
+//        nameRecipe = nameRecipe,
+//        photoRecipe = photoRecipe,
+//        categoryRecipe = categoryRecipe,
+//        areaRecipe = areaRecipe,
+//        instructionsRecipe = instructionsRecipe,
+//        tagsRecipe = tagsRecipe,
+//        youtubeRecipe = youtubeRecipe,
+//        ingredients = ingredients,
+//        measures = measures,
+//
+//    )
+//}
+
 fun RecipeShortDto.toMealShort(): RecipeShort {
     return RecipeShort(id = idMeal, name = strMeal, thumbnail = strMealThumb)
 }

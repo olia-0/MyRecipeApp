@@ -5,6 +5,6 @@ import javax.inject.Inject
 class MealInstructionsUseCase @Inject constructor() {
 
     fun splitInstructions(instructions: String?): List<String> {
-        return instructions?.split("\r\n") ?: emptyList()
+        return instructions?.split("\\r\\n") ?: emptyList()
     }
 }

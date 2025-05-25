@@ -34,6 +34,7 @@ class SearchRecipesByIngredientsUseCase @Inject constructor(
 //            Log.d("SearchRecipesByCategory","Помилка з АПІ")
 //            repository.getSavedRecipesByIngredients(ingredients)
 //        }
+        Log.d("Я тут Юскейс",ingredients.toString())
         return repository.getRecipesByIngredientsSmart(ingredients)
     }
 //    suspend operator fun invoke(ingredients: List<String>): List<RecipeShort> {

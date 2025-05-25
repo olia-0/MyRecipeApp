@@ -143,4 +143,9 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.14.0"))
     implementation("com.google.firebase:firebase-analytics")
 
+    ///
+    //implementation(libs.androidx.material.pullrefresh)
+    implementation(libs.accompanist.swiperefresh) // Актуальна версія на момент травня 2025
+
+
 }

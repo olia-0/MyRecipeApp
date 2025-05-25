@@ -25,6 +25,7 @@ import com.example.myrecipeapp.ui.screens.categories.CategoriesScreen
 import com.example.myrecipeapp.ui.screens.category.CategoryScreen
 import com.example.myrecipeapp.ui.screens.home.HomeScreen
 import com.example.myrecipeapp.ui.screens.login.LoginScreen
+import com.example.myrecipeapp.ui.screens.profile.ProfileScreen
 import com.example.myrecipeapp.ui.screens.recipe.RecipeScreen
 import com.example.myrecipeapp.ui.screens.saved.SavedScreen
 import com.example.myrecipeapp.ui.screens.search.SearchScreen
@@ -36,6 +37,7 @@ fun NavigationGraph(
     navController: NavHostController){
     NavHost(
         navController = navController,
+
         //startDestination = AppRoute.StartScreen.route)
         startDestination = AppRoute.HomeScreen.route){
         //startDestination = AppRoute.HomeScreen.route) {
@@ -49,9 +51,15 @@ fun NavigationGraph(
         composable(AppRoute.SavedScreen.route) {
             SavedScreen(navController)
         }
-        composable(AppRoute.LoginScreen.route) {
-            LoginScreen(navController)
+        composable(AppRoute.ProfileScreen.route) {
+            ProfileScreen()
         }
+        composable(AppRoute.LoginScreen.route) {
+            LoginScreen()
+        }
+//        composable(AppRoute.RegistrationScreen.route) {
+//            RegistrationScreen(navController)
+//        }
 
 //        composable(AppRoute.CategoryScreen.route) {
 //            CategoryScreen(navController)

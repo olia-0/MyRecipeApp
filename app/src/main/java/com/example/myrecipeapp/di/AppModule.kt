@@ -8,13 +8,16 @@ import com.example.myrecipeapp.data.local.RecipeDatabase
 import com.example.myrecipeapp.data.local.dao.CategoryDao
 import com.example.myrecipeapp.data.local.dao.SavedRecipeDao
 import com.example.myrecipeapp.data.local.dao.ViewedRecipeDao
+import com.example.myrecipeapp.data.remote.UserRemoteDataSource
 import com.example.myrecipeapp.data.remote.api.ApiService
 import com.example.myrecipeapp.data.repositoryImpl.CategoriesRepositoryImpl
 
 import com.example.myrecipeapp.data.repositoryImpl.RecipeRepositoryImpl
+import com.example.myrecipeapp.data.repositoryImpl.UserRepositoryImpl
 import com.example.myrecipeapp.domain.repository.CategoriesRepository
 import com.example.myrecipeapp.domain.repository.RecipeFilterRepository
 import com.example.myrecipeapp.domain.repository.RecipeRepository
+import com.example.myrecipeapp.domain.repository.UserRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,6 +45,14 @@ object AppModule {
         daoCategory: CategoryDao
     ): CategoriesRepository {
         return CategoriesRepositoryImpl(apiService, daoCategory)
+    }
+
+    @Provides
+    fun provideUserRepository(
+        remote: UserRemoteDataSource,
+        userPreferences: UserPreferences
+    ): UserRepository {
+        return UserRepositoryImpl(remote,userPreferences)
     }
 
 

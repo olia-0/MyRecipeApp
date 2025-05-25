@@ -3,7 +3,6 @@ package com.example.myrecipeapp.ui.screens.home
 import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.R
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
@@ -30,6 +29,10 @@ import com.example.myrecipeapp.domain.usecase.SearchRecipesByIngredientsUseCase
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -46,6 +49,7 @@ class HomeViewModel @Inject constructor(
     private val saveRecipeUseCase: SaveRecipeUseCase,
     private val downloadImageUseCase: DownloadRecipeImageUseCase,
     private val getRecipeByIdWithFallbackUseCase: GetRecipeByIdWithFallbackUseCase,
+    private val userPreferences: UserPreferences
     //private val getCategoriesUseCase: GetCategoriesUseCase
 ) : ViewModel() {
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
@@ -55,6 +59,10 @@ class HomeViewModel @Inject constructor(
     }
     var currentUser by mutableStateOf(auth.currentUser)
         private set
+
+    val username: StateFlow<String> = userPreferences.userProfile
+        .map { it.username }
+        .stateIn(viewModelScope, SharingStarted.Lazily, "")
 
     private val _randomRecipes = MutableLiveData<List<RecipeShort>>()
     val randomRecipes: LiveData<List<RecipeShort>> = _randomRecipes
@@ -91,6 +99,9 @@ class HomeViewModel @Inject constructor(
     fun signOut() {
         auth.signOut()
         currentUser = null
+        viewModelScope.launch {
+            userPreferences.clear()
+        }
     }
 
     fun fetchCategoriesOnce() {
@@ -116,6 +127,7 @@ class HomeViewModel @Inject constructor(
             Log.d("Я тут 2_6", "")
             val random = getRandomRecipesUseCase()
             _randomRecipes.value = random
+            Log.d("рецепт",random.toString())
             _recipesResult.value = random
         }
         //search()
@@ -175,14 +187,17 @@ fun addIngredient(ingredient: String) {
 
         viewModelScope.launch {
             _recipesResult.value = when {
-                currentIngredients.isNotEmpty() && currentCategory != null ->
-                    searchRecipesByCategoryAndIngredientsUseCase(currentCategory.name, currentIngredients)
+                currentIngredients.isNotEmpty() && currentCategory != null -> {
+                    Log.d("Case1",currentIngredients.toString()+currentCategory.toString())
+                    searchRecipesByCategoryAndIngredientsUseCase(currentCategory.name, currentIngredients)}
 
-                currentIngredients.isNotEmpty() ->
-                    searchRecipesByIngredientsUseCase(currentIngredients)
+                currentIngredients.isNotEmpty() ->{
+                    Log.d("Case2",currentIngredients.toString())
+                    searchRecipesByIngredientsUseCase(currentIngredients)}
 
-                currentCategory != null ->
-                    searchRecipesByCategoryUseCase(currentCategory.name)
+                currentCategory != null ->{
+                    Log.d("Case3",currentCategory.toString())
+                    searchRecipesByCategoryUseCase(currentCategory.name)}
                 else -> _randomRecipes.value //getRandomRecipesUseCase()
             }
         }

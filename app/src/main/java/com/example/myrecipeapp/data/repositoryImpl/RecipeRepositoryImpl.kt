@@ -13,6 +13,7 @@ import com.example.myrecipeapp.data.local.entity.SavedRecipeEntity
 import com.example.myrecipeapp.data.local.entity.ViewedRecipeEntity
 import com.example.myrecipeapp.data.mapper.toMealShort
 import com.example.myrecipeapp.data.mapper.toRecipe
+import com.example.myrecipeapp.data.mapper.toRecipe3
 import com.example.myrecipeapp.data.mapper.toRecipeShort
 import com.example.myrecipeapp.data.mapper.toSavedRecipeEntity
 import com.example.myrecipeapp.data.mapper.toViewedEntity
@@ -43,45 +44,84 @@ class RecipeRepositoryImpl @Inject constructor(
     private suspend fun getUserId(): String =
         userPrefs.userProfile.first().uid
 
+
+
     override suspend fun getRecipes(): List<Recipe> {
-        return apiService.getMealsByFirstLetter().meals.map { it.toRecipe() }
+        return apiService.getMealsByFirstLetter().recipes.map { it.toRecipe() }
+    }
+    override suspend fun getRecipeById(id: String): Recipe {
+        return apiService.getMealById(id).toRecipe()
     }
 
-    override suspend fun getRecipeById(id: String): Recipe {
-        return apiService.getMealById(id).meals.first().toRecipe()
-    }
+
+//    override suspend fun getRecipeById(id: String): Recipe {
+//        return apiService.getMealById(id).recipes.first().toRecipe()
+//
+//    }
 
 //    override suspend fun getRandomRecipe(): Meal {
 //        return apiService.getRandomRecipe().meals.first().toRecipe()
 //    }
-    override suspend fun getRandomRecipes10(): List<RecipeShort> {
-        return (1..10).map {
-            apiService.getRandomRecipe().meals.first().toMealShort()
-        }
-    }
+//    override suspend fun getRandomRecipes10(): List<RecipeShort> {
+//        return (1..10).map {
+//            //apiService.getMealsByFirstLetter().recipes.first().toRecipeShort()
+//            apiService.getMealsByFirstLetter("а").recipes.first().toRecipe().toRecipeShort()
+//        }
+//    }
+override suspend fun getRandomRecipes10(): List<RecipeShort> {
+    //Log.d("репозиторій",response.toString())
+    val response = apiService.getMealsByFirstLetter()
+    Log.d("репозиторій",response.toString())
+    return response.recipes.map { it.toRecipeShort() }?.take(10) ?: emptyList()
+}
+
 
     override suspend fun getRecipesByCategory(category: String): List<RecipeShort> {
-        return apiService.filterByCategory(category).meals.map { it.toMealShort() } ?: emptyList()
+        return apiService.filterByCategory(category).recipes.map { it.toRecipeShort() } ?: emptyList()
     }
 
+//    override suspend fun getRecipesByIngredient(ingredient: String): List<RecipeShort> {
+//
+//        return apiService.filterByIngredient(ingredient).meals.map { it.toMealShort() } ?: emptyList()
+//    }
+
+//    override suspend fun getRecipesByIngredient(ingredient: String): List<RecipeShort> {
+//        val response = apiService.filterByIngredient(ingredient)
+//        val meals = response.meals ?: return emptyList()
+//        Log.d("РецептиЗКуркою",meals.toString())
+//        return meals.map { it.toMealShort() }
+//    }
+
+//    override suspend fun getRecipesByIngredient(ingredient: String): List<RecipeShort> {
+//        val response = apiService.filterByIngredient(ingredient)
+//        val meals = response.meals ?: return emptyList()
+//        Log.d("РецептиЗКуркою", meals.toString())
+//
+//        return meals
+//            .filter { it.idMeal != null && it.strMeal != null && it.strMealThumb != null }
+//            .map { it.toMealShort() }
+//    }
     override suspend fun getRecipesByIngredient(ingredient: String): List<RecipeShort> {
-
-        return apiService.filterByIngredient(ingredient).meals.map { it.toMealShort() } ?: emptyList()
+        val response = apiService.filterByIngredient(ingredient)
+        return response.recipes.map { it.toRecipeShort() } ?: emptyList()
     }
+
+
+
     override suspend fun getRecipesByCategoryAndIngredients(category: String, ingredients: List<String>): List<RecipeShort> {
         //val ingredients = ingredients.split(",").map { it.trim().lowercase() }
 
         // Отримуємо рецепти по категорії
-        val categoryMeals = apiService.filterByCategory(category).meals?.map { it.toMealShort() } ?: emptyList()
+        val categoryMeals = apiService.filterByCategory(category).recipes?.map { it.toRecipeShort() } ?: emptyList()
 
         if (ingredients.isEmpty()) return categoryMeals
 
         // Отримуємо рецепти по першому інгредієнту
-        var commonMeals = apiService.filterByIngredient(ingredients.first()).meals?.map { it.toMealShort() } ?: emptyList()
+        var commonMeals = apiService.filterByIngredient(ingredients.first()).recipes?.map { it.toRecipeShort() } ?: emptyList()
 
         // Перетинаємо з іншими інгредієнтами
         for (ingredient in ingredients.drop(1)) {
-            val meals = apiService.filterByIngredient(ingredient).meals?.map { it.toMealShort() } ?: emptyList()
+            val meals = apiService.filterByIngredient(ingredient).recipes?.map { it.toRecipeShort() } ?: emptyList()
             val ids = meals.map { it.id }.toSet()
             commonMeals = commonMeals.filter { it.id in ids }
         }
@@ -131,12 +171,17 @@ class RecipeRepositoryImpl @Inject constructor(
     override suspend fun getRecipeByIdWithFallback(id: String): Recipe {
         return try {
             // Пробуємо отримати з API
-            val recipe = apiService.getMealById(id).meals.first().toRecipe()
+            val recipe = apiService.getMealById(id).toRecipe()
             recipe
         } catch (e: Exception) {
             val userId = getUserId()
+            try {
+                dao.getById(id, userId)?.toRecipe() ?: throw e
+            }catch (e: Exception){
+                viewedDao.getById(id)?.toRecipe() ?: throw e
+            }
             // Якщо сталася помилка (немає інтернету), повертаємо з бази
-            dao.getById(id, userId)?.toRecipe() ?: throw e
+            //dao.getById(id, userId)?.toRecipe() ?: throw e
         }
     }
 
@@ -399,7 +444,9 @@ override suspend fun getSavedRecipesByIngredients(ingredients: List<String>): Li
     }
     override suspend fun getRecipesByIngredientsSmart(ingredients: List<String>): List<RecipeShort> {
         return try {
+            Log.d("Я тут Smart",ingredients.toString())
             var result = getRecipesByIngredient(ingredients.first())
+            Log.d("Я тут Smart Результат",ingredients.first())
 
             // Знаходимо спільні ID
             for (ingredient in ingredients.drop(1)) {
@@ -418,6 +465,7 @@ override suspend fun getSavedRecipesByIngredients(ingredients: List<String>): Li
             result
             //getRecipesByIngredient(ingredients)
         } catch (e: IOException) {//catch (e: Exception) {
+            Log.d("Я тут Smart Збережені",ingredients.toString())
             getSavedRecipesByIngredients(ingredients)
         }
     }
@@ -432,7 +480,7 @@ override suspend fun getSavedRecipesByIngredients(ingredients: List<String>): Li
     ///searchName
     override suspend fun searchRecipesByName(name: String): List<Recipe> {
         val response = apiService.searchMealsByName(name)
-        return response.meals.map { it.toRecipe() } ?: emptyList()
+        return response.recipes.map { it.toRecipe() } ?: emptyList()
     }
 
 

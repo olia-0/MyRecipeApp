@@ -55,6 +55,8 @@ import com.example.myrecipeapp.ui.theme.MyPrimeryOrang
 import com.example.myrecipeapp.ui.theme.Slate400
 import com.example.myrecipeapp.ui.theme.Slate900
 import com.example.myrecipeapp.ui.theme.White
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.launch
 
 //@Preview(showSystemUi = true)
@@ -69,7 +71,18 @@ fun SearchScreen(
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     var isSaved by rememberSaveable { mutableStateOf(true) }
+    var isRefreshing by rememberSaveable { mutableStateOf(false) }
     //Text("SearchScreen")
+
+    SwipeRefresh(
+        state = rememberSwipeRefreshState(isRefreshing),
+        onRefresh = {
+            isRefreshing = true
+            viewModel.reloadAuthState {
+                isRefreshing = false
+            }
+        }
+    ) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize(),
@@ -158,6 +171,7 @@ fun SearchScreen(
                     LaunchedEffect(Unit) {
                         isSaved = viewModel.isRecipeSaved(viewedRecipes[index].idRecipe)
                     }
+                    Log.d("Переглянутий айді",viewedRecipes[index].toString() +"  "+viewedRecipes[index].idRecipe)
                     CardRecipeHomeScreen(
                         navController,
                         viewedRecipes[index].toRecipeShort(),
@@ -243,6 +257,7 @@ fun SearchScreen(
             }
         }
     }
+}
 }
 @Composable
 fun HistoryCardRecipe(){
