@@ -21,6 +21,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
+import com.example.myrecipeapp.ui.screens.addrecipe.AddRecipeScreen
 import com.example.myrecipeapp.ui.screens.categories.CategoriesScreen
 import com.example.myrecipeapp.ui.screens.category.CategoryScreen
 import com.example.myrecipeapp.ui.screens.home.HomeScreen
@@ -52,10 +53,13 @@ fun NavigationGraph(
             SavedScreen(navController)
         }
         composable(AppRoute.ProfileScreen.route) {
-            ProfileScreen()
+            ProfileScreen(navController)
         }
         composable(AppRoute.LoginScreen.route) {
-            LoginScreen()
+            LoginScreen(navController)
+        }
+        composable(AppRoute.AddRecipeScreen.route) {
+            AddRecipeScreen()
         }
 //        composable(AppRoute.RegistrationScreen.route) {
 //            RegistrationScreen(navController)
@@ -76,9 +80,9 @@ fun NavigationGraph(
         }
         composable(
             route = "recipe/{recipeId}",
-            arguments = listOf(navArgument("recipeId") { type = NavType.IntType })
+            arguments = listOf(navArgument("recipeId") { type = NavType.StringType })
         ) { backStackEntry ->
-            val recipeId = backStackEntry.arguments?.getInt("recipeId") ?: 0
+            val recipeId = backStackEntry.arguments?.getString("recipeId") ?: "0"
             RecipeScreen(navController = navController, recipeId = recipeId)
         }
 //        composable(AppRoute.RecipeScreen.route) {
@@ -151,6 +155,7 @@ fun BottomBar(
     val screens = listOf(
         AppRoute.HomeScreen,
         AppRoute.SearchScreen,
+        AppRoute.AddRecipeScreen,
         AppRoute.SavedScreen,
         AppRoute.ProfileScreen
     )

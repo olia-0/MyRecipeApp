@@ -18,6 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.myrecipeapp.R
+import com.example.myrecipeapp.ui.theme.MyPrimeryOrang
 
 @Composable
 fun BackButton(
@@ -27,7 +28,7 @@ fun BackButton(
         modifier = Modifier
             .size(40.dp)
             .clip(RoundedCornerShape(20.dp))
-            .background(Color.Cyan),
+            .background(MyPrimeryOrang),
         contentAlignment = Alignment.Center
     ) {
         IconButton(

@@ -138,17 +138,17 @@ fun SearchScreen(
                     .padding(top = 20.dp)
                     .fillParentMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.Start
             ) {
                 Text(
-                    text = "Last Viewed",
+                    text = "Переглянуті",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     color = Slate900,
                     modifier = Modifier.padding(8.dp)
                 )
                 Text(
-                    text = "See All",
+                    text = "   ",
                     fontSize = 18.sp,
                     //fontWeight = FontWeight.Bold,
                     color = MyPrimeryOrang,

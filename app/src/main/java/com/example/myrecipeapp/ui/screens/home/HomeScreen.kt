@@ -33,6 +33,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -131,12 +132,19 @@ fun HomeScreen(
         modifier = Modifier.fillMaxSize(),
 
     ) {
+//        item {
+//            Button(onClick = {
+//                navController.navigate(route = "add")
+//            }) {
+//                Text("Додати рецепт")
+//            }
+//        }
         val countRecipe = 10
         item {
             Row(modifier = Modifier
-                .padding(20.dp)
-                .fillParentMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceAround) {
+                .fillParentMaxWidth()
+                .padding(20.dp),
+                horizontalArrangement = Arrangement.Absolute.Left) {
                 Row {
                     Image(
                         painter = painterResource(id = R.drawable.img1),
@@ -149,7 +157,7 @@ fun HomeScreen(
                     )
                     VerticalDivider(modifier = Modifier.padding(5.dp))
                     Column(
-                        modifier = Modifier,
+                        modifier = Modifier.padding(20.dp),
                         horizontalAlignment = Alignment.Start,
 
                     ) {
@@ -176,11 +184,11 @@ fun HomeScreen(
                 }
                 //VerticalDivider(modifier = Modifier.padding(20.dp))
                 //CategoryButton(navController)
-                Image(
-                    painter = painterResource(id = R.drawable.notification),
-                    contentDescription = stringResource(id = R.string.home_button),
-                    modifier = Modifier.size(40.dp)
-                )
+//                Image(
+//                    painter = painterResource(id = R.drawable.notification),
+//                    contentDescription = stringResource(id = R.string.home_button),
+//                    modifier = Modifier.size(40.dp)
+//                )
             }
         }
         item {

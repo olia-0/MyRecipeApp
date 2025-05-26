@@ -13,10 +13,8 @@ class GetRandomRecipesUseCase @Inject constructor (
 ) {
     suspend operator fun invoke(): List<RecipeShort> {
         return try {
-            Log.d("Юскейс","Репозиторій")
             repository.getRandomRecipes10()
         }catch (e: Exception){
-            Log.d("Юскейс",e.toString())
             repository.getSavedRecipes().first().map { it.toRecipeShort() }
         }
     }

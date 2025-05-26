@@ -28,6 +28,9 @@ class CategoriesRepositoryImpl @Inject constructor(
 ) : CategoriesRepository {
 
 
+    override suspend fun clearAllCategories(){
+       dao.clearAll()
+    }
     override suspend fun getCategories(): List<Categories> {
         Log.d("API_DEBUG", apiService.getCategories().toString())
         return apiService.getCategories().categories.map { it.toCategories() }

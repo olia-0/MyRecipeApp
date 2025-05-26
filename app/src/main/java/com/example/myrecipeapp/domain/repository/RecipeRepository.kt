@@ -2,6 +2,7 @@ package com.example.myrecipeapp.domain.repository
 
 import android.content.Context
 import com.example.myrecipeapp.data.local.entity.SavedRecipeEntity
+import com.example.myrecipeapp.data.remote.dto.RecipeDto
 import com.example.myrecipeapp.domain.model.Meal
 import com.example.myrecipeapp.domain.model.Recipe
 import com.example.myrecipeapp.domain.model.RecipeShort
@@ -51,4 +52,6 @@ interface RecipeRepository  {
 
     ////searchName
     suspend fun searchRecipesByName(name: String): List<Recipe>
+    ///add
+    suspend fun addRecipe(recipe: RecipeDto)
 }

@@ -61,6 +61,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.myrecipeapp.data.datastore.UserPreferences
 import com.example.myrecipeapp.navigation.AppRoute
 import com.example.myrecipeapp.navigation.NavigationGraph
+import com.example.myrecipeapp.ui.screens.home.HomeScreen
 import com.example.myrecipeapp.ui.screens.login.AuthViewModel
 import com.example.myrecipeapp.ui.screens.login.LoginScreen
 import dagger.hilt.android.AndroidEntryPoint
@@ -76,14 +77,16 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MyRecipeAppTheme(darkTheme = false) {
-                MyApp(userPrefs)
-                //AppHomeScreen()
+                //MyApp(userPrefs)
+                AppHomeScreen(userPrefs)
             }
         }
     }
 }
+
+
 @Composable
-fun MyApp(
+fun MyApp1(
     userPrefs: UserPreferences,
     navController: NavHostController = rememberNavController()
 ) {
@@ -96,14 +99,15 @@ fun MyApp(
     )
 
     when (currentScreen) {
-        "home" -> AppHomeScreen(navController)
+       // "home" -> AppHomeScreen(navController)
         "login" -> LoginScreen(navController)// { currentScreen = "home" }
     }
 }
 
 @Composable
 fun AppHomeScreen(
-    navController: NavHostController
+    userPrefs: UserPreferences,
+    navController: NavHostController = rememberNavController()
 ) {
     MyRecipeAppTheme(darkTheme = false) {
         Scaffold(
@@ -112,7 +116,7 @@ fun AppHomeScreen(
             bottomBar = {
                 val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
                 if (currentRoute != AppRoute.LoginScreen.route &&
-                    //currentRoute != AppRoute.RegistrationScreen.route &&
+                    currentRoute != AppRoute.LoginScreen.route &&
                     currentRoute != AppRoute.StartScreen.route &&
                     currentRoute != AppRoute.RecipeScreen.route
                 ) {
@@ -127,12 +131,25 @@ fun AppHomeScreen(
             if (currentRoute != null) {
                 Log.d("currentRoute",currentRoute)
             }
+            var currentScreen by remember { mutableStateOf("loading") }
+
+            AppEntry(
+                userPrefs = userPrefs,
+                onLoggedIn = { currentScreen = "home" },
+                onLoginRequired = { currentScreen = "login" }
+            )
             Box(
                 modifier = Modifier.padding(innerPadding)
             ) {
 
                 NavigationGraph(navController = navController)
             }
+
+            when (currentScreen) {
+                //"home" -> HomeScreen(navController)
+                "login" -> LoginScreen(navController)// { currentScreen = "home" }
+            }
+
 
 
         }

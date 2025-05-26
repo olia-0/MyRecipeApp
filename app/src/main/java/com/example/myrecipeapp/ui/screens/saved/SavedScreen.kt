@@ -83,11 +83,21 @@ fun SavedScreen(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        //MemoryUsageInfo(viewModel)
         item {
-            Spacer(modifier = Modifier.size(20.dp))
-            //SearchRecipeByNameTextField()
+            Text(
+                text = "Збережені рецепти",
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Bold,
+                color = Slate900,
+                modifier = Modifier.padding(20.dp)
+            )
+            Spacer(modifier = Modifier.height(20.dp))
         }
+        //MemoryUsageInfo(viewModel)
+        //item {
+            //Spacer(modifier = Modifier.size(20.dp))
+            //SearchRecipeByNameTextField()
+        //}
         item {
             //TabSaved(navController,recipes, coroutineScope,viewModel)
             SavedTable(navController,recipes, coroutineScope,viewModel)

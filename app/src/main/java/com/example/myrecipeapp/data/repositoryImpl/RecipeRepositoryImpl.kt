@@ -18,6 +18,7 @@ import com.example.myrecipeapp.data.mapper.toRecipeShort
 import com.example.myrecipeapp.data.mapper.toSavedRecipeEntity
 import com.example.myrecipeapp.data.mapper.toViewedEntity
 import com.example.myrecipeapp.data.remote.api.ApiService
+import com.example.myrecipeapp.data.remote.dto.RecipeDto
 import com.example.myrecipeapp.domain.model.Meal
 import com.example.myrecipeapp.domain.model.Recipe
 import com.example.myrecipeapp.domain.model.RecipeShort
@@ -30,6 +31,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.io.File
+import java.util.UUID
 import javax.inject.Inject
 
 class RecipeRepositoryImpl @Inject constructor(
@@ -46,6 +48,7 @@ class RecipeRepositoryImpl @Inject constructor(
 
 
 
+
     override suspend fun getRecipes(): List<Recipe> {
         return apiService.getMealsByFirstLetter().recipes.map { it.toRecipe() }
     }
@@ -53,21 +56,6 @@ class RecipeRepositoryImpl @Inject constructor(
         return apiService.getMealById(id).toRecipe()
     }
 
-
-//    override suspend fun getRecipeById(id: String): Recipe {
-//        return apiService.getMealById(id).recipes.first().toRecipe()
-//
-//    }
-
-//    override suspend fun getRandomRecipe(): Meal {
-//        return apiService.getRandomRecipe().meals.first().toRecipe()
-//    }
-//    override suspend fun getRandomRecipes10(): List<RecipeShort> {
-//        return (1..10).map {
-//            //apiService.getMealsByFirstLetter().recipes.first().toRecipeShort()
-//            apiService.getMealsByFirstLetter("а").recipes.first().toRecipe().toRecipeShort()
-//        }
-//    }
 override suspend fun getRandomRecipes10(): List<RecipeShort> {
     //Log.d("репозиторій",response.toString())
     val response = apiService.getMealsByFirstLetter()
@@ -80,33 +68,10 @@ override suspend fun getRandomRecipes10(): List<RecipeShort> {
         return apiService.filterByCategory(category).recipes.map { it.toRecipeShort() } ?: emptyList()
     }
 
-//    override suspend fun getRecipesByIngredient(ingredient: String): List<RecipeShort> {
-//
-//        return apiService.filterByIngredient(ingredient).meals.map { it.toMealShort() } ?: emptyList()
-//    }
-
-//    override suspend fun getRecipesByIngredient(ingredient: String): List<RecipeShort> {
-//        val response = apiService.filterByIngredient(ingredient)
-//        val meals = response.meals ?: return emptyList()
-//        Log.d("РецептиЗКуркою",meals.toString())
-//        return meals.map { it.toMealShort() }
-//    }
-
-//    override suspend fun getRecipesByIngredient(ingredient: String): List<RecipeShort> {
-//        val response = apiService.filterByIngredient(ingredient)
-//        val meals = response.meals ?: return emptyList()
-//        Log.d("РецептиЗКуркою", meals.toString())
-//
-//        return meals
-//            .filter { it.idMeal != null && it.strMeal != null && it.strMealThumb != null }
-//            .map { it.toMealShort() }
-//    }
     override suspend fun getRecipesByIngredient(ingredient: String): List<RecipeShort> {
         val response = apiService.filterByIngredient(ingredient)
         return response.recipes.map { it.toRecipeShort() } ?: emptyList()
     }
-
-
 
     override suspend fun getRecipesByCategoryAndIngredients(category: String, ingredients: List<String>): List<RecipeShort> {
         //val ingredients = ingredients.split(",").map { it.trim().lowercase() }
@@ -330,38 +295,7 @@ override suspend fun getRandomRecipes10(): List<RecipeShort> {
         val combined = (saved + viewed).distinctBy { it.id }
         return combined
     }
-//    override suspend fun getSavedRecipesByCategory(category: String): List<RecipeShort> {
-//        val savedList = dao.getByCategory(category).first()
-//        val viewedList = viewedDao.getByCategory(category).first()
-//
-//        val saved = savedList.map { it.toRecipeShort() }
-//        val viewed = viewedList.map { it.toRecipeShort() }
-//
-//        return (saved + viewed).distinctBy { it.id }
-//    }
 
-
-//    override suspend fun getSavedRecipesByIngredients(ingredients: List<String>): List<RecipeShort> {
-//        val saved = dao.getAll().filter { recipe ->
-//            ingredients.all { it in recipe.ingredients }
-//        }
-//        val viewed = viewedDao.getAll().filter { recipe ->
-//            ingredients.all { it in recipe.ingredients }
-//        }
-//        val combined = (saved + viewed).distinctBy { it.id }
-//        return combined.map { it.toRecipeShort() }
-//    }
-//
-//    override suspend fun getSavedRecipesByCategoryAndIngredients(category: String, ingredients: List<String>): List<RecipeShort> {
-//        val saved = dao.getByCategory(category).filter { recipe ->
-//            ingredients.all { it in recipe.ingredients }
-//        }
-//        val viewed = viewedDao.getByCategory(category).filter { recipe ->
-//            ingredients.all { it in recipe.ingredients }
-//        }
-//        val combined = (saved + viewed).distinctBy { it.id }
-//        return combined.map { it.toRecipeShort() }
-//    }
 override suspend fun getSavedRecipesByIngredients(ingredients: List<String>): List<RecipeShort> {
     val userId = getUserId()
     val savedList = dao.getAll(userId).first()
@@ -397,42 +331,6 @@ override suspend fun getSavedRecipesByIngredients(ingredients: List<String>): Li
 
         return (savedFiltered + viewedFiltered).distinctBy { it.id }
     }
-//override suspend fun getSavedRecipesByIngredients(ingredients: String): List<RecipeShort> {
-//    val ingredients = ingredients.split(",").map { it.trim().lowercase() }
-//    val savedList = dao.getAll().first()
-//    val viewedList = viewedDao.getAllViewedRecipes().first()
-//
-//    val savedFiltered = savedList.filter { recipe ->
-//        val recipeIngredients = recipe.ingredients.split(",").map { it.trim().lowercase() }
-//        ingredients.all { it in recipeIngredients }
-//    }.map { it.toRecipeShort() }
-//
-//    val viewedFiltered = viewedList.filter { recipe ->
-//        val recipeIngredients = recipe.ingredients.split(",").map { it.trim().lowercase() }
-//        ingredients.all { it in recipeIngredients }
-//    }.map { it.toRecipeShort() }
-//
-//    return (savedFiltered + viewedFiltered).distinctBy { it.id }
-//}
-
-//    override suspend fun getSavedRecipesByCategoryAndIngredients(category: String, ingredients: String): List<RecipeShort> {
-//        val ingredients = ingredients.split(",").map { it.trim().lowercase() }
-//        val savedList = dao.getByCategory(category).first()
-//        val viewedList = viewedDao.getByCategory(category).first()
-//
-//        val savedFiltered = savedList.filter { recipe ->
-//            val recipeIngredients = recipe.ingredients.split(",").map { it.trim().lowercase() }
-//            ingredients.all { it in recipeIngredients }
-//        }.map { it.toRecipeShort() }
-//
-//        val viewedFiltered = viewedList.filter { recipe ->
-//            val recipeIngredients = recipe.ingredients.split(",").map { it.trim().lowercase() }
-//            ingredients.all { it in recipeIngredients }
-//        }.map { it.toRecipeShort() }
-//
-//        return (savedFiltered + viewedFiltered).distinctBy { it.id }
-//    }
-
 
     /////SMART
     override suspend fun getRecipesByCategorySmart(category: String): List<RecipeShort> {
@@ -481,6 +379,28 @@ override suspend fun getSavedRecipesByIngredients(ingredients: List<String>): Li
     override suspend fun searchRecipesByName(name: String): List<Recipe> {
         val response = apiService.searchMealsByName(name)
         return response.recipes.map { it.toRecipe() } ?: emptyList()
+    }
+
+    override suspend fun addRecipe(recipe: RecipeDto) {
+        val userId = getUserId()
+        val finalRecipe = recipe.copy(
+            userId = userId,
+            photoRecipe = recipe.photoRecipe ?: "",
+            categoryRecipe = recipe.categoryRecipe ?: "",
+            areaRecipe = recipe.areaRecipe ?: "",
+            instructionsRecipe = recipe.instructionsRecipe ?: "",
+            tagsRecipe = recipe.tagsRecipe ?: "",
+            youtubeRecipe = recipe.youtubeRecipe ?: "",
+            description = recipe.description ?: "",
+            cookingTime = recipe.cookingTime ?: "",
+            nutritionCalories = recipe.nutritionCalories ?: 0,
+            nutritionProteins = recipe.nutritionProteins ?: 0f,
+            nutritionFats = recipe.nutritionFats ?: 0f,
+            nutritionCarbs = recipe.nutritionCarbs ?: 0f,
+            idRecipe = recipe.idRecipe.ifBlank { UUID.randomUUID().toString() }
+        )
+
+        apiService.addRecipe(finalRecipe)
     }
 
 

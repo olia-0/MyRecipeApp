@@ -50,7 +50,7 @@ object NetworkModule {
 
             //.baseUrl("https://www.themealdb.com/api/json/v1/1/")
             //.baseUrl("http://localhost:8080/")
-            .baseUrl("https://9f70-109-229-30-29.ngrok-free.app/")
+            .baseUrl("https://41dc-109-229-30-29.ngrok-free.app/")
 
             //.baseUrl("http://192.168.1.100:8080/") http://10.0.2.2:8080/
             .client(okHttpClient)

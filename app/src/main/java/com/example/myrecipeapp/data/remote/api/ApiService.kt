@@ -6,8 +6,10 @@ import com.example.myrecipeapp.data.remote.dto.RecipeDto
 import com.example.myrecipeapp.data.remote.dto.RecipeShortListDto
 import com.example.myrecipeapp.data.remote.dto.RecipesListDto
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -79,5 +81,12 @@ interface ApiService {
     // Пошук рецептів за назвою
     @GET("api/recipes/search")
     suspend fun searchMealsByName(@Query("name") name: String): RecipesListDto
+
+    @POST("api/recipes")
+    suspend fun addRecipe(@Body recipeDto: RecipeDto): Response<Unit>
+
+    @GET("api/recipes/user")
+    suspend fun getRecipesFullByUserId(@Query("user_id") userId: String): RecipesListDto
+
 }
 

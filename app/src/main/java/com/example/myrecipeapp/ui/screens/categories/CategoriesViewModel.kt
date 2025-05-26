@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myrecipeapp.domain.model.Category
 import com.example.myrecipeapp.domain.usecase.AddCategoryUseCase
+import com.example.myrecipeapp.domain.usecase.ClearAllCategoriesUseCase
 import com.example.myrecipeapp.domain.usecase.GetCategoriesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -17,12 +18,14 @@ import javax.inject.Inject
 class CategoriesViewModel @Inject constructor(
     private val getCategoriesUseCase: GetCategoriesUseCase,
     private val addCategoryUseCase: AddCategoryUseCase,
+    private val clearAllCategoriesUseCase: ClearAllCategoriesUseCase,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     val categories = mutableStateListOf<Category>()
 
     init {
+        //clearCategory()
         Log.e("AddCategory", "Помилка")
         viewModelScope.launch {
             //val list = getCategoriesUseCase()
@@ -67,6 +70,33 @@ class CategoriesViewModel @Inject constructor(
 //                context,"Vegetarian","https://img.freepik.com/premium-photo/high-angle-view-food-plate-table_1048944-28960889.jpg"
 //            )
 
+
+//            addCategoryUseCase(
+//                context,"Другі страви","https://img.freepik.com/free-photo/pasta-shape-heart-salad-with-tomatoes-cucumbers-olives-mozzarella-red-onion-greek-style_2829-14032.jpg")
+//            addCategoryUseCase(
+//                context,"Перші страви","https://img.freepik.com/free-photo/high-angle-winter-vegetables-soup-bowl-with-spoon-toast_23-2148706346.jpg")
+//            addCategoryUseCase(
+//                context,"Салати","https://img.freepik.com/premium-photo/high-angle-view-food-plate-table_1048944-28960889.jpg")
+//            addCategoryUseCase(
+//                context,"Закуски","https://img.freepik.com/free-photo/white-plate-with-fried-eggs-orange-juice_23-2148341673.jpg")
+//            addCategoryUseCase(
+//                context,"Напої","https://img.freepik.com/free-photo/side-view-organic-fresh-juices-bottles-served-with-tubes-fruits-wooden-cutting-board_140725-94665.jpg")
+//            addCategoryUseCase(
+//                context,"Десерти","https://img.freepik.com/free-photo/orange-cake-decorated-with-fresh-orange-slices-mimosa-flowers-light_114579-7720.jpg")
+//            addCategoryUseCase(
+//                context,"Випічка","https://img.freepik.com/free-photo/fresh-danish-bread-with-milk-fruit-blueberry-cherry-sauce-served-with-milk_1150-23544.jpg")
+//            addCategoryUseCase(
+//                context,"Заготівлі","https://img.freepik.com/free-photo/jars-with-preserved-food-assortment_23-2149239013.jpg")
+
+
+//            addCategoryUseCase(
+//                context,"Другі страви","")
+
+        }
+    }
+    fun clearCategory(){
+        viewModelScope.launch {
+            clearAllCategoriesUseCase()
         }
     }
 

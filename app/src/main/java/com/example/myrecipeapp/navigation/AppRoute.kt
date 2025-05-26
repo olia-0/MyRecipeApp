@@ -9,6 +9,7 @@ enum class AppRoute(val route: String, val title: String, val iconId : Int) {
     SavedScreen("saved", "Saved", R.drawable.saved),
     ProfileScreen("profile", "Profile", R.drawable.profile),
     LoginScreen("login", "Login", R.drawable.login),
+    AddRecipeScreen("add", "Add", R.drawable.add),
     //RegistrationScreen("registration","Registration", 0),
     //CategoryScreen("category","Category",0),
     CategoryScreen("category/{categoryName}", "Category", 0),

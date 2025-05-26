@@ -70,7 +70,7 @@ fun CategoriesScreen(
             ) {
                 BackButton(navController)
                 Text(
-                    text = "Recipe Categories",
+                    text = "Категорії рецептів",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     color = Slate900

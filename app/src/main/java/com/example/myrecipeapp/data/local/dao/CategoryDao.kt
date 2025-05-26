@@ -24,4 +24,7 @@ interface CategoryDao {
 
     @Query("SELECT * FROM categories WHERE name = :name")
     suspend fun getCategoryByName(name: String): CategoryEntity?
+
+    @Query("DELETE FROM categories")
+    suspend fun clearAll()
 }

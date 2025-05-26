@@ -18,11 +18,12 @@ class SearchRecipesByCategoryAndIngredientsUseCase @Inject constructor(
     private val repository: RecipeRepository,
 ) {
     suspend operator fun invoke(category: String, ingredients: List<String>): List<RecipeShort> {
-        return try {
-            repository.getRecipesByCategoryAndIngredients(category, ingredients)
-        } catch (e: Exception) {
-            Log.d("SearchRecipesByCategory","Помилка з АПІ")
-            repository.getSavedRecipesByCategoryAndIngredients(category, ingredients)
-        }
+//        return try {
+//            repository.getRecipesByCategoryAndIngredients(category, ingredients)
+//        } catch (e: Exception) {
+//            Log.d("SearchRecipesByCategory","Помилка з АПІ")
+//            repository.getSavedRecipesByCategoryAndIngredients(category, ingredients)
+//        }
+        return repository.getRecipesByCategoryAndIngredientsSmart(category,ingredients)
     }
 }

@@ -79,7 +79,8 @@ data class RecipeDto(
     @SerializedName("nutritionProteins") val nutritionProteins: Float?,
     @SerializedName("nutritionFats") val nutritionFats: Float?,
     @SerializedName("nutritionCarbs") val nutritionCarbs: Float?,
-    @SerializedName("cookingTime") val cookingTime: String?
+    @SerializedName("cookingTime") val cookingTime: String?,
+    @SerializedName("userId") val userId: String? = null
 )
 
 data class RecipesListDto(

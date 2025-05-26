@@ -6,6 +6,7 @@ import com.example.myrecipeapp.domain.model.Category
 import com.example.myrecipeapp.domain.model.Meal
 
 interface CategoriesRepository {
+    suspend fun clearAllCategories()
     suspend fun getCategories(): List<Categories>
     suspend fun getCategoriesDB(): List<Category>
     suspend fun saveCategory(category: CategoryEntity)

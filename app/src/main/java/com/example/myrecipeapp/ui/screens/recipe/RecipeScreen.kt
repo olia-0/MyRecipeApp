@@ -18,6 +18,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -72,7 +74,7 @@ import java.io.File
 @Composable
 fun RecipeScreen(
     navController: NavHostController,
-    recipeId: Int,
+    recipeId: String,
     viewModel: RecipeViewModel = hiltViewModel()
 ) {
 
@@ -85,6 +87,7 @@ fun RecipeScreen(
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     var isSaved by rememberSaveable  { mutableStateOf(false) }
+    var isVideoLoaded by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.fetchMealById(recipeId.toString())
@@ -111,12 +114,10 @@ fun RecipeScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(350.dp),
-                    //.clip(CircleShape), // Обрізає у круглу форму
                     contentScale = ContentScale.Crop
                 )
                 Row(
                     modifier = Modifier
-                        //.padding(5.dp,0.dp)
                         .fillParentMaxWidth()
                         .height(100.dp)
                         .padding(15.dp, 20.dp),
@@ -143,28 +144,7 @@ fun RecipeScreen(
                             }
                         )
                     }
-//                    SavedButton(
-//                        isSaved = isSaved,
-//                        onClick = {
-//                            coroutineScope.launch {
-//                                if (isSaved) {
-//                                    meals?.idRecipe?.let { it1 -> viewModel.deleteSavedRecipe(it1) }
-//                                    isSaved = false
-//                                } else {
-//                                    meals?.let { it1 ->
-//                                        viewModel.saveRecipeWithImage(context,
-//                                            it1
-//                                        )
-//                                    }
-//                                    isSaved = true
-//                                }
-//                            }
-//                        }
-//                    )
                 }
-
-
-
             }
         }
         item {
@@ -201,23 +181,6 @@ fun RecipeScreen(
                         RowIngredient(ingredient, measure, index + 1)
                     }
                 }
-//                Column {
-//                    RowIngredient(meals?.strIngredient1,meals?.strMeasure1,1)
-//                    RowIngredient(meals?.strIngredient2,meals?.strMeasure2,2)
-//                    RowIngredient(meals?.strIngredient3,meals?.strMeasure3,3)
-//                    RowIngredient(meals?.strIngredient4,meals?.strMeasure4,4)
-//                    RowIngredient(meals?.strIngredient5,meals?.strMeasure5,5)
-//                    RowIngredient(meals?.strIngredient6,meals?.strMeasure6,6)
-//                    RowIngredient(meals?.strIngredient7,meals?.strMeasure7,7)
-//                    RowIngredient(meals?.strIngredient8,meals?.strMeasure8,8)
-//                    RowIngredient(meals?.strIngredient9,meals?.strMeasure9,9)
-//                    RowIngredient(meals?.strIngredient10,meals?.strMeasure10,10)
-//                    RowIngredient(meals?.strIngredient11,meals?.strMeasure11,11)
-//                    RowIngredient(meals?.strIngredient12,meals?.strMeasure12,12)
-//                    RowIngredient(meals?.strIngredient13,meals?.strMeasure13,13)
-//                    RowIngredient(meals?.strIngredient14,meals?.strMeasure14,14)
-//                    RowIngredient(meals?.strIngredient15,meals?.strMeasure15,15)
-//                }
                 HorizontalDivider(
                     modifier = Modifier.padding(20.dp,10.dp),
                     thickness = 4.dp,
@@ -261,7 +224,6 @@ fun RecipeScreen(
 //                        style = MaterialTheme.typography.bodyMedium,
 //                        modifier = Modifier.padding(top = 4.dp)
 //                    )
-
                 }
                 HorizontalDivider(
                     modifier = Modifier.padding(20.dp,10.dp),
@@ -272,7 +234,19 @@ fun RecipeScreen(
         }
         item {
             if (videoId!= null) {
-                YouTubePlayerScreen(videoId = videoId)
+                //YouTubePlayerScreen(videoId = videoId)
+                Button(
+                    onClick = {
+                        isVideoLoaded = !isVideoLoaded
+
+                    },
+                    colors = ButtonDefaults.buttonColors(MyPrimeryOrang)
+                ) {
+                    Text(text = if (!isVideoLoaded) "Відтворити відео" else "Відео запущено")
+                }
+                if(isVideoLoaded){
+                    YouTubePlayerScreen(videoId = videoId)
+                }
             }
         }
     }
@@ -394,6 +368,50 @@ fun YouTubePlayerScreen(videoId: String) {
     )
 }
 
+@Composable
+fun YouTubePlayerScreen1(videoId: String) {
+    val context = LocalContext.current
+    var youTubePlayer by remember { mutableStateOf<YouTubePlayer?>(null) }
+    var isVideoLoaded by remember { mutableStateOf(false) }
+
+    Column(
+        modifier = Modifier
+            .padding(10.dp)
+            .fillMaxWidth()
+    ) {
+        AndroidView(
+            factory = { ctx ->
+                val youTubePlayerView = YouTubePlayerView(ctx)
+
+                youTubePlayerView.addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
+                    override fun onReady(player: YouTubePlayer) {
+                        youTubePlayer = player // зберігаємо плеєр
+                    }
+                })
+
+                youTubePlayerView
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(220.dp)
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // Кнопка для запуску відео
+        Button(
+            onClick = {
+                if (!isVideoLoaded) {
+                    youTubePlayer?.loadVideo(videoId, 0f)
+                    isVideoLoaded = true
+                }
+            },
+            enabled = !isVideoLoaded
+        ) {
+            Text(text = if (!isVideoLoaded) "Відтворити відео" else "Відео запущено")
+        }
+    }
+}
 
 
 
