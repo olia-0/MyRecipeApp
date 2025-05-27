@@ -19,6 +19,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -88,22 +90,35 @@ fun ProfileScreen(
             Row(
                 modifier = Modifier
                     .fillParentMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.Center
             ) {
 
                 Text(
                     text = "Профіль",
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Slate900
+                    color = Slate900,
+                    modifier = Modifier.weight(4f)
                 )
                 IconButton(
                     onClick = {
                         edit = !edit
-                    }
+                    },
+                    modifier = Modifier.weight(1f)
                 ) {
-                    Icon(imageVector = Icons.Default.Create,
-                        contentDescription = "Edit_profile")
+                    Icon(imageVector = Icons.Default.Edit,
+                        contentDescription = "Edit_profile",
+                        tint = MyPrimeryOrang)
+                }
+                IconButton(
+                    onClick = {
+                        edit = !edit
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Icon(imageVector = Icons.Default.ExitToApp,
+                        contentDescription = "Exit_profile",
+                        tint = MyPrimeryOrang)
                 }
             }
         }

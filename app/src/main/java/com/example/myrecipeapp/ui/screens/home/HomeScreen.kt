@@ -145,14 +145,16 @@ fun HomeScreen(
                 .fillParentMaxWidth()
                 .padding(20.dp),
                 horizontalArrangement = Arrangement.Absolute.Left) {
-                Row {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Image(
-                        painter = painterResource(id = R.drawable.img1),
+                        painter = painterResource(id = R.drawable.fox),
                         contentDescription = stringResource(id = R.string.image_user),
                         modifier = Modifier
                             .clip(CircleShape)
                             .border(1.dp, Color.Gray, CircleShape)
-                            .size(50.dp)
+                            .size(60.dp)
 
                     )
                     VerticalDivider(modifier = Modifier.padding(5.dp))

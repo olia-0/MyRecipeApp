@@ -348,11 +348,7 @@ fun RecipeCategoriesFull(
                     color = White
                 )
                 Spacer(modifier = Modifier.size(5.dp))
-                Text(
-                    "16000 recipes",
-                    fontSize = 12.sp,
-                    color = White
-                )
+
             }
         }
     }

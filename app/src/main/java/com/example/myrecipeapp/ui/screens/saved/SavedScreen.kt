@@ -20,14 +20,23 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.AlertDialogDefaults
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -57,8 +66,10 @@ import com.example.myrecipeapp.ui.components.SearchRecipeTextField
 import com.example.myrecipeapp.ui.screens.home.CardRecipeHomeScreen
 import com.example.myrecipeapp.ui.screens.home.HomeViewModel
 import com.example.myrecipeapp.ui.screens.home.SearchRecipeByIngredientsTextField
+import com.example.myrecipeapp.ui.theme.Gray100
 import com.example.myrecipeapp.ui.theme.Gray300
 import com.example.myrecipeapp.ui.theme.Gray400
+import com.example.myrecipeapp.ui.theme.Gray50
 import com.example.myrecipeapp.ui.theme.MyPrimeryOrang
 import com.example.myrecipeapp.ui.theme.Slate400
 import com.example.myrecipeapp.ui.theme.Slate900
@@ -74,8 +85,9 @@ fun SavedScreen(
     val recipes by viewModel.savedRecipes.collectAsState()
     val coroutineScope = rememberCoroutineScope()
 
-
-
+    val memoryUsage by viewModel.memoryUsage.collectAsState()
+    var showDialog by remember { mutableStateOf(false) }
+    var edit by rememberSaveable { mutableStateOf(false) }
     LazyColumn (
         modifier = Modifier
             .fillMaxSize(),
@@ -84,15 +96,72 @@ fun SavedScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         item {
-            Text(
-                text = "Збережені рецепти",
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Bold,
-                color = Slate900,
-                modifier = Modifier.padding(20.dp)
-            )
             Spacer(modifier = Modifier.height(20.dp))
+            Row(
+                modifier = Modifier
+                    .fillParentMaxWidth()
+                    .padding(20.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+
+                Text(
+                    text = "Збережені рецепти",
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Slate900,
+                    modifier = Modifier.weight(3f)
+                )
+                IconButton(
+                    onClick = { showDialog = true },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Icon(imageVector = Icons.Default.Info,
+                        contentDescription = "Edit_profile",
+                        tint = MyPrimeryOrang
+                    )
+                }
+                if (showDialog && memoryUsage != null) {
+                    val (used, max) = memoryUsage!!
+                    MemoryUsageDialog(
+                        used = used,
+                        max = max,
+                        onDismiss = { showDialog = false },
+                        onClear = { }//viewModel.clearSavedRecipes() }
+                    )
+                }
+            }
         }
+//        item {
+//            Text(
+//                text = "Збережені рецепти",
+//                fontSize = 22.sp,
+//                fontWeight = FontWeight.Bold,
+//                color = Slate900,
+//                modifier = Modifier.padding(20.dp)
+//            )
+//
+//            Spacer(modifier = Modifier.height(20.dp))
+//        }
+//        item {
+//            Spacer(modifier = Modifier.height(10.dp))
+//
+//            Button(
+//                onClick = { showDialog = true },
+//                modifier = Modifier.padding(8.dp)
+//            ) {
+//                Text("Інформація про пам’ять")
+//            }
+//
+//            if (showDialog && memoryUsage != null) {
+//                val (used, max) = memoryUsage!!
+//                MemoryUsageDialog(
+//                    used = used,
+//                    max = max,
+//                    onDismiss = { showDialog = false },
+//                    onClear = { }//viewModel.clearSavedRecipes() }
+//                )
+//            }
+//        }
         //MemoryUsageInfo(viewModel)
         //item {
             //Spacer(modifier = Modifier.size(20.dp))
@@ -364,7 +433,7 @@ fun CardRecipeCategorySaved(
     }
 }
 @Composable
-fun MemoryUsageInfo(viewModel: SavedViewModel) {
+fun MemoryUsageInfo1(viewModel: SavedViewModel) {
     val memoryUsage by viewModel.memoryUsage.collectAsState()
 
     memoryUsage?.let { (used, max) ->
@@ -378,6 +447,55 @@ fun MemoryUsageInfo(viewModel: SavedViewModel) {
         )
     }
 }
+
+@Composable
+fun MemoryUsageDialog(
+    used: Long,
+    max: Long,
+    onDismiss: () -> Unit,
+    onClear: () -> Unit
+) {
+    val usedMB = used.toFloat() / (1024 * 1024)
+    val maxMB = max.toFloat() / (1024 * 1024)
+    val progress = (used.toFloat() / max.toFloat()).coerceIn(0f, 1f)
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Використання пам’яті", fontSize = 14.sp) },
+        containerColor = Gray100,
+        text = {
+            Column {
+                Text("Зайнято: ${String.format("%.2f", usedMB)} MB із ${String.format("%.2f", maxMB)} MB")
+                Spacer(modifier = Modifier.height(10.dp))
+                LinearProgressIndicator(
+                    progress = progress,
+                    color = Slate900,
+                    trackColor = Slate400,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(10.dp)
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = {
+                onClear()
+                onDismiss()
+            },
+                //colors = ButtonDefaults.textButtonColors(MyPrimeryOrang)
+            ) {
+                Text("Очистити рецепти", color = MyPrimeryOrang)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Закрити", color = MyPrimeryOrang)
+
+            }
+        }
+    )
+}
+
 fun formatBytes(bytes: Long): String {
     val kb = 1024L
     val mb = kb * 1024

@@ -165,7 +165,7 @@ fun RecipeScreen(
                     color = Gray100
                 )
                 Text(
-                    text = "Ingredients",
+                    text = "Інгредієнти",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Slate900,
@@ -188,7 +188,7 @@ fun RecipeScreen(
                 )
 
                 Text(
-                    text = stringResource(R.string.instructions),
+                    text = "Інструкція з приготування",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Slate900,

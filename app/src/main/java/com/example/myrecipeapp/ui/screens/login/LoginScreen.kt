@@ -177,7 +177,7 @@ fun LoginScreen(
                         onClick = { isLoginMode = !isLoginMode }
                     ) {
                         Text(
-                            text = if (isLoginMode) "Немає акаунту? Зареєструйся" else "Вже є акаунт? Увійти",
+                            text = if (isLoginMode) "Немає акаунту? Зареєструватися" else "Вже є акаунт? Увійти",
                             fontSize = 14.sp,
                             color = Slate900
                         )

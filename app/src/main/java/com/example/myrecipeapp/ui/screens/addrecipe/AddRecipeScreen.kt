@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
@@ -66,6 +67,8 @@ import com.example.myrecipeapp.data.remote.dto.RecipeDto
 import com.example.myrecipeapp.ui.theme.Gray100
 import com.example.myrecipeapp.ui.theme.Gray400
 import com.example.myrecipeapp.ui.theme.MyPrimeryOrang
+import com.example.myrecipeapp.ui.theme.Slate400
+import com.example.myrecipeapp.ui.theme.Slate500
 import com.example.myrecipeapp.ui.theme.Slate900
 import java.util.UUID
 
@@ -346,8 +349,8 @@ fun AddRecipeScreen(
 
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
+                    .fillMaxSize(),
+                    //.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Button(
@@ -357,7 +360,8 @@ fun AddRecipeScreen(
                             mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
                             )
                         )
-                    }) {
+                    }, colors = ButtonDefaults.buttonColors(Slate500)
+                    ) {
                     Text("Обрати зображення")
                 }
 
@@ -381,7 +385,7 @@ fun AddRecipeScreen(
                     Text(text = imageUrl, fontSize = 12.sp, color = Color.Gray)
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                //Spacer(modifier = Modifier.height(20.dp))
 
             }
         }
